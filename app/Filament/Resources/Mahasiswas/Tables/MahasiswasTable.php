@@ -1,0 +1,64 @@
+<?php
+
+namespace App\Filament\Resources\Mahasiswas\Tables;
+
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Tables\Table;
+
+class MahasiswasTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->columns([
+                \Filament\Tables\Columns\TextColumn::make('name')
+                    ->label('Nama')
+                    ->sortable()
+                    ->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('npm')
+                    ->label('NPM')
+                    ->sortable()
+                    ->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('prodi')
+                    ->label('Prodi')
+                    ->sortable(),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                \Filament\Actions\EditAction::make(),
+                
+                \Filament\Actions\Action::make('cetak_kartu')
+                    ->label('Kartu')
+                    ->icon('heroicon-o-identification')
+                    ->color('info')
+                    ->action(function ($record) {
+                        return response()->streamDownload(function () use ($record) {
+                            echo \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.kartu-ujian', ['record' => $record])
+                                ->setPaper('a5', 'portrait')
+                                ->output();
+                        }, 'Kartu-Ujian-' . $record->name . '.pdf');
+                    }),
+
+                \Filament\Actions\Action::make('cetak_sertifikat')
+                    ->label('Sertifikat')
+                    ->icon('heroicon-o-academic-cap')
+                    ->color('success')
+                    ->action(function ($record) {
+                        return response()->streamDownload(function () use ($record) {
+                            echo \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.sertifikat', ['record' => $record])
+                                ->setPaper('a4', 'landscape')
+                                ->output();
+                        }, 'Sertifikat-' . $record->name . '.pdf');
+                    }),
+            ])
+            ->bulkActions([
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+}
