@@ -18,3 +18,6 @@ Route::get('/', function () {
 
 
 // mahasiswa routes
+Route::get('/mahasiswa/daftar', function () {
+    return view('mahasiswa.daftar.index');
+})->name('mahasiswa.daftar');
