@@ -11,25 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembayaran', function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger('id_user');
-            $table->unsignedBigInteger('id_ujian');
-            $table->string('status');
-            $table->timestamps();
+      Schema::create('pembayarans', function (Blueprint $table) {
+    $table->id();
 
-            $table->foreign('id_ujian')
-                  ->references('id')
-                  ->on('ujian')
-                  ->cascadeOnDelete();
-        });
+    $table->foreignId('daftar_id')
+          ->constrained('daftars')
+          ->cascadeOnDelete();
+
+    $table->integer('amount');
+    $table->string('status')->default('pending');
+    $table->string('reference')->unique()->nullable();
+
+    $table->timestamps();
+});
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('pembayaran');
+        Schema::dropIfExists('pembayarans');
     }
 };
+
+

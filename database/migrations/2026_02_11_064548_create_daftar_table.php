@@ -11,31 +11,29 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('daftar', function (Blueprint $table) {
-            $table->id();
+        Schema::create('daftars', function (Blueprint $table) {
+    $table->id();
 
-             $table->unsignedBigInteger('id_ujian');
+    $table->foreignId('ujian_id')
+          ->constrained('ujians')
+          ->cascadeOnDelete();
 
-            $table->string('nim');
-            $table->string('nama_lengkap');
-            $table->date('bod');
-            $table->string('prodi');
-            $table->string('no_telp', 12);
-            $table->string('email');
-            $table->timestamps();
+    $table->string('nim')->index();
+    $table->string('nama_lengkap');
+    $table->date('bod');
+    $table->string('prodi');
+    $table->string('no_telp', 15);
+    $table->string('email')->index();
 
-             $table->foreign('id_ujian')
-                  ->references('id')
-                  ->on('ujian')
-                  ->cascadeOnDelete();
-        });
+    $table->string('status')->default('pending');
+
+    $table->timestamps();
+
+    $table->unique(['ujian_id', 'email']);
+});
     }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
+  public function down(): void
     {
-        Schema::dropIfExists('daftar');
+        Schema::dropIfExists('daftars');
     }
 };

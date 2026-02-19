@@ -9,12 +9,19 @@ class KartuUjian extends Model
 {
     use HasFactory;
 
-    protected $table = 'kartu_ujian';
-
     protected $fillable = [
-        'nim',
-        'nama_lengkap',
-        'bod',
-        'prodi',
+        'daftar_id',
+        'nomor_peserta',
+        'generated_at',
     ];
+
+    public $timestamps = true;
+
+    /**
+     * Relasi: kartu ujian milik satu pendaftaran
+     */
+    public function daftar()
+    {
+        return $this->belongsTo(Daftar::class);
+    }
 }

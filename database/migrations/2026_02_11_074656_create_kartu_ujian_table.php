@@ -11,22 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('kartu_ujian', function (Blueprint $table) {
-            $table->id();
-            $table->string('nim');
-            $table->string('nama_lengkap');
-            $table->date('bod');
-            $table->string('prodi');
+       Schema::create('kartu_ujians', function (Blueprint $table) {
+    $table->id();
 
-            $table->unsignedBigInteger('id_ujian');
+    $table->foreignId('daftar_id')
+          ->constrained('daftars')
+          ->cascadeOnDelete();
 
-            $table->timestamps();
+    $table->string('nomor_peserta')->unique();
 
-            $table->foreign('id_ujian')
-                  ->references('id')
-                  ->on('ujian')
-                  ->cascadeOnDelete();
-        });
+    $table->timestamp('generated_at');
+
+    $table->timestamps();
+});
+
     }
 
     /**
