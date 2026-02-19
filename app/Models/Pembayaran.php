@@ -18,8 +18,8 @@ class Pembayaran extends Model
         'id_ujian',
     ];
 
-    public function ujian()
+    public function daftar()
     {
-        return $this->belongsTo(Ujian::class, 'id_ujian');
+        return $this->belongsTo(Daftar::class);
     }
 }

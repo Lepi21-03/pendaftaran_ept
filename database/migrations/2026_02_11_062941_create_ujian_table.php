@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ujian', function (Blueprint $table) {
+        Schema::create('ujians', function (Blueprint $table) {
             $table->id();
-            $table->date('tanggal_ujian');
-            $table->integer('kuota');
+            $table->date('tanggal_ujian')->unique();
+            $table->unsignedInteger('kuota')->default(40);
+            $table->string('status')->default('open');
             $table->timestamps();
+
+            $table->index(['tanggal_ujian', 'status']);
         });
     }
 
@@ -24,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ujian');
+        Schema::dropIfExists('ujians');
     }
 };

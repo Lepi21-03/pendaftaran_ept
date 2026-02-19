@@ -9,25 +9,37 @@ class Ujian extends Model
 {
     use HasFactory;
 
-    protected $table = 'ujian';
-
     protected $fillable = [
         'tanggal_ujian',
         'kuota',
     ];
 
-    public function daftar()
+    protected $attributes = [
+        'status' => 'open',
+        'kuota'  => 40,
+    ];
+
+    /**
+     * Relasi: 1 ujian punya banyak pendaftaran
+     */
+    public function daftars()
     {
-        return $this->hasMany(Daftar::class, 'id_ujian');
+        return $this->hasMany(Daftar::class);
     }
 
-    public function pembayaran()
+    /**
+     * Helper: cek apakah ujian masih bisa didaftari
+     */
+    public function isOpen(): bool
     {
-        return $this->hasMany(Pembayaran::class, 'id_ujian');
+        return $this->status === 'open' && $this->sisaKuota() > 0;
     }
 
-    public function kartu_ujian()
+    /**
+     * Helper: hitung sisa kuota (aman)
+     */
+    public function sisaKuota(): int
     {
-        return $this->hasMany(KartuUjian::class, 'id_ujian');
+        return max(0, $this->kuota - $this->daftars()->count());
     }
 }
