@@ -21,3 +21,8 @@ Route::get('/', function () {
 Route::get('/mahasiswa/daftar', function () {
     return view('mahasiswa.daftar.index');
 })->name('mahasiswa.daftar');
+
+// webhook routes
+use App\Http\Controllers\Api\XenditWebhookController;
+Route::post('/webhook/xendit', [XenditWebhookController::class, 'handle']);
+
