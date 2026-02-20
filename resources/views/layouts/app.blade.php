@@ -7,16 +7,11 @@
 
     <title>@yield('title', config('app.name', 'EPT'))</title>
 
-    <!-- Tailwind CDN -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
 
-    <!-- Google Font -->
-    <link
-        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
-        rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
-    <!-- Tailwind Config -->
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -28,10 +23,7 @@
                         "background-dark": "#0f172a",
                     },
                     fontFamily: {
-                        display: ["Plus Jakarta Sans", "sans-serif"],
-                    },
-                    borderRadius: {
-                        DEFAULT: "0.75rem",
+                        sans: ["Plus Jakarta Sans", "sans-serif"],
                     },
                 },
             },
@@ -39,12 +31,29 @@
     </script>
 
     <style>
+        /* Memastikan font diterapkan ke seluruh elemen */
         body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+        }
+
+        /* CSS khusus agar Ikon Outlined muncul dengan benar */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined' !important;
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
         }
     </style>
 
-    <!-- Laravel Assets -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
