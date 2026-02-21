@@ -12,6 +12,11 @@ class Pengawas extends Model
         'nama',
     ];
 
+    public function ujians()
+    {
+        return $this->belongsToMany(Ujian::class, 'pengawas_ujians');
+    }
+
    
     public function getInisialAttribute(): string
     {

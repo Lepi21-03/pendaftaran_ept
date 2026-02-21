@@ -12,32 +12,39 @@
                 <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200">Registration Form</h2>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Please ensure all your information is accurate as it will appear on your certificate.</p>
             </div>
-            <form action="#" class="space-y-6" method="POST">
+            <form action="{{ route('mahasiswa.daftar.store') }}" class="space-y-6" method="POST">
                 @csrf
+                <input type="hidden" name="ujian_id" value="{{ $ujian->id }}">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="nim">Student ID (NIM)</label>
-                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="nim" name="nim" placeholder="Enter your nim" required="" type="text"/>
+                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="nim" name="nim" placeholder="Enter your nim" required="" type="text" value="{{ old('nim') }}"/>
+                        @error('nim') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="full_name">Full Name</label>
-                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="full_name" name="full_name" placeholder="Enter your full legal name" required="" type="text"/>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="nama_lengkap">Full Name</label>
+                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="nama_lengkap" name="nama_lengkap" placeholder="Enter your full legal name" required="" type="text" value="{{ old('nama_lengkap') }}"/>
+                        @error('nama_lengkap') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="email">Email Address</label>
-                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="email" name="email" placeholder="yourname@gmail.com" required="" type="email"/>
+                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="email" name="email" placeholder="yourname@gmail.com" required="" type="email" value="{{ old('email') }}"/>
+                        @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="phone">Phone Number</label>
-                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="phone" name="phone" placeholder="081234567890" required="" type="tel"/>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="no_telp">Phone Number</label>
+                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="no_telp" name="no_telp" placeholder="081234567890" required="" type="tel" value="{{ old('no_telp') }}"/>
+                        @error('no_telp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="dob">Date of Birth (DOB) </label>
-                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="dob" name="dob" required="" type="date"/>
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="bod">Date of Birth (DOB) </label>
+                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="bod" name="bod" required="" type="date" value="{{ old('bod') }}"/>
+                        @error('bod') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="prodi">Study Program</label>
-                        <input type="text" id="prodi" name="prodi" placeholder="Enter your study program"class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" required>
+                        <input type="text" id="prodi" name="prodi" placeholder="Enter your study program" class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" required value="{{ old('prodi') }}">
+                        @error('prodi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
                 <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg">
@@ -45,7 +52,7 @@
                         <span class="material-icons text-primary mt-0.5">info</span>
                         <div>
                             <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-300">Session Details</h4>
-                            <p class="text-sm text-blue-800 dark:text-blue-400">You are registering for: <span class="font-medium">EPT 26 NOVEMBER 2025</span></p>
+                            <p class="text-sm text-blue-800 dark:text-blue-400">You are registering for: <span class="font-medium">EPT {{ \Carbon\Carbon::parse($ujian->tanggal_ujian)->translatedFormat('d F Y') }}</span></p>
                         </div>
                     </div>
                 </div>

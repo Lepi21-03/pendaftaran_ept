@@ -27,6 +27,11 @@ class Ujian extends Model
         return $this->hasMany(Daftar::class);
     }
 
+    public function pengawas()
+    {
+        return $this->belongsToMany(Pengawas::class, 'pengawas_ujians');
+    }
+
     /**
      * Helper: cek apakah ujian masih bisa didaftari
      */
