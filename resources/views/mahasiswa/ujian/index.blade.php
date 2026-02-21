@@ -25,129 +25,59 @@
 </button>
 </div>
 </div>
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-<div class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 relative overflow-hidden flex flex-col">
-<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-8 -mt-8 rounded-full group-hover:scale-110 transition-transform"></div>
-<div class="mb-6">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
-<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                            Registration Open
-                        </span>
-<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">EPT 26 NOVEMBER 2025</h3>
-<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-medium">
-<span class="material-symbols-outlined text-base">location_on</span>
-                            Main Hall, Language Center
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            @forelse($ujian as $u)
+            <div class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 relative overflow-hidden flex flex-col">
+                <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-8 -mt-8 rounded-full group-hover:scale-110 transition-transform"></div>
+                <div class="mb-6">
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 {{ $u->sisaKuota() > 5 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' }} text-xs font-bold uppercase tracking-wider rounded-full mb-4">
+                        <span class="w-1.5 h-1.5 rounded-full {{ $u->sisaKuota() > 5 ? 'bg-green-500 animate-pulse' : 'bg-amber-500' }}"></span>
+                        {{ $u->sisaKuota() > 5 ? 'Registration Open' : 'Filling Fast' }}
+                    </span>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">EPT {{ \Carbon\Carbon::parse($u->tanggal_ujian)->translatedFormat('d F Y') }}</h3>
+                    <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-medium">
+                        <span class="material-symbols-outlined text-base">groups</span>
+                        Kuota: {{ $u->sisaKuota() }} / {{ $u->kuota }}
+                    </div>
+                </div>
+                <div class="space-y-4 mb-8 flex-grow">
+                    <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                        <span class="material-symbols-outlined text-sm">school</span>
+                        Invigilators &amp; Teachers
+                    </p>
+                    <div class="space-y-3">
+                        @foreach($u->pengawas as $p)
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-bold text-xs">
+                                {{ $p->inisial }}
+                            </div>
+                            <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $p->nama }}</span>
                         </div>
-</div>
-<div class="space-y-4 mb-8 flex-grow">
-<p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">school</span>
-                            Invigilators &amp; Teachers
-                        </p>
-<div class="space-y-3">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-bold text-xs">DH</div>
-<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Dewi Rosnita Hardiany, S.S., M.Li</span>
-</div>
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">AU</div>
-<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Admin User</span>
-</div>
-</div>
-</div>
-<div class="mt-auto">
-<a href="{{ route('mahasiswa.daftar') }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
-                            Register Now
-                            <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-</a>
-</div>
-</div>
-<div class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 relative overflow-hidden flex flex-col">
-<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-8 -mt-8 rounded-full group-hover:scale-110 transition-transform"></div>
-<div class="mb-6">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
-<span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                            Registration Open
-                        </span>
-<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">UJIAN EPT 19 NOVEMBER 2025</h3>
-<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-medium">
-<span class="material-symbols-outlined text-base">location_on</span>
-                            Virtual Session (Zoom)
-                        </div>
-</div>
-<div class="space-y-4 mb-8 flex-grow">
-<p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">school</span>
-                            Invigilators &amp; Teachers
-                        </p>
-<div class="space-y-3">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-pink-100 dark:bg-pink-900/40 flex items-center justify-center text-pink-700 dark:text-pink-400 font-bold text-xs">BB</div>
-<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Budiati Budiati</span>
-</div>
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-700 dark:text-amber-400 font-bold text-xs">ES</div>
-<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Endang Susilowati</span>
-</div>
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold text-xs">AU</div>
-<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Admin User</span>
-</div>
-</div>
-</div>
-<div class="mt-auto">
-<a href="{{ route('mahasiswa.daftar') }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
-                            Register Now
-                            <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-</a>
-</div>
-</div>
-<div class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 relative overflow-hidden flex flex-col">
-<div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-8 -mt-8 rounded-full group-hover:scale-110 transition-transform"></div>
-<div class="mb-6">
-<span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold uppercase tracking-wider rounded-full mb-4">
-<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                            Filling Fast
-                        </span>
-<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">UJIAN EPT 12 NOVEMBER 2025</h3>
-<div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-medium">
-<span class="material-symbols-outlined text-base">location_on</span>
-                            Computer Lab A
-                        </div>
-</div>
-<div class="space-y-4 mb-8 flex-grow">
-<p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
-<span class="material-symbols-outlined text-sm">school</span>
-                            Invigilators &amp; Teachers
-                        </p>
-<div class="space-y-3">
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center text-amber-700 dark:text-amber-400 font-bold text-xs">ES</div>
-<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Endang Susilowati</span>
-</div>
-<div class="flex items-center gap-3">
-<div class="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-slate-500 dark:text-slate-400 font-bold text-xs uppercase">AU</div>
-<span class="text-sm font-medium text-slate-700 dark:text-slate-300">Admin User</span>
-</div>
-</div>
-</div>
-<div class="mt-auto">
-<a href="{{ route('mahasiswa.daftar') }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
-                            Register Now
-                            <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-</a>
-</div>
-</div>
-<div class="group bg-slate-100 dark:bg-slate-800/40 border-2 border-dashed border-slate-300 dark:border-slate-700 p-6 rounded-2xl flex flex-col items-center justify-center text-center gap-4 transition-colors">
-<div class="w-12 h-12 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500">
-<span class="material-symbols-outlined">update</span>
-</div>
-<div>
-<p class="text-slate-600 dark:text-slate-400 font-semibold">More Sessions Coming Soon</p>
-<p class="text-sm text-slate-400 dark:text-slate-500">New dates are announced every Friday.</p>
-</div>
-</div>
-</div>
+                        @endforeach
+                        @if($u->pengawas->isEmpty())
+                        <p class="text-sm text-slate-400 italic">Belum ada pengawas ditugaskan</p>
+                        @endif
+                    </div>
+                </div>
+                <div class="mt-auto">
+                    <a href="{{ route('mahasiswa.daftar.index', ['ujian_id' => $u->id]) }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
+                        Register Now
+                        <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+            @empty
+            <div class="col-span-full group bg-slate-100 dark:bg-slate-800/40 border-2 border-dashed border-slate-300 dark:border-slate-700 p-12 rounded-2xl flex flex-col items-center justify-center text-center gap-4 transition-colors">
+                <div class="w-16 h-16 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-slate-400 dark:text-slate-500">
+                    <span class="material-symbols-outlined text-3xl">update</span>
+                </div>
+                <div>
+                    <p class="text-slate-600 dark:text-slate-400 font-semibold text-xl">Belum ada sesi tersedia</p>
+                    <p class="text-slate-400 dark:text-slate-500">Jadwal Baru Akan Segera Diumumkan.</p>
+                </div>
+            </div>
+            @endforelse
+        </div>
 </section>
 </main>
 @endsection

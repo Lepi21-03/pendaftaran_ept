@@ -7,17 +7,19 @@ use Illuminate\Http\Request;
 use App\Models\Ujian;
 use App\Models\Daftar;
 use App\Services\PendaftaranService;
+use App\Services\PembayaranService;
 
 class MahasiswaController extends Controller
 {
-    public function index()
+    public function ujian()
     {
-        $ujian = Ujian::where('status', 'open')->get();
+        $ujian = Ujian::with('pengawas')->where('status', 'open')->get();
         return view('mahasiswa.ujian.index', compact('ujian'));
     }
 
-    public function create($id)
+    public function daftar(Request $request)
     {
+        $id = $request->query('ujian_id');
         $ujian = Ujian::findOrFail($id);
         return view('mahasiswa.daftar.index', compact('ujian'));
     }
@@ -39,6 +41,18 @@ class MahasiswaController extends Controller
             return redirect()->route('mahasiswa.ujian.index')
                 ->with('success', 'Pendaftaran berhasil');
         } catch (\Throwable $e) {
+            return back()->withErrors($e->getMessage());
+        }
+    }
+
+    public function bayar($daftarId, PembayaranService $service)
+    {
+        try {
+            $kartu = $service->bayarDanGenerateKartu($daftarId);
+
+            return redirect()->route('mahasiswa.ujian.index', $kartu->Id)
+            ->with('success', 'Pembayaran berhasil, Kartu Ujian Dibuat');
+        }  catch (\Throwable $e) {
             return back()->withErrors($e->getMessage());
         }
     }

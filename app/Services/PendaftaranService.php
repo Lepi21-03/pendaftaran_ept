@@ -28,7 +28,7 @@ class PendaftaranService
             }
 
             // Simpan pendaftaran (FIELD TERKONTROL)
-            return Daftar::create([
+            $pendaftaran = Daftar::create([
                 'ujian_id'     => $ujian->id,
                 'nim'          => $data['nim'],
                 'nama_lengkap' => $data['nama_lengkap'],
@@ -37,6 +37,13 @@ class PendaftaranService
                 'no_telp'      => $data['no_telp'],
                 'email'        => $data['email'],
             ]);
+
+            // Tutup ujian otomatis jika kuota penuh setelah pendaftaran ini
+            if ($ujian->daftars()->count() >= $ujian->kuota) {
+                $ujian->update(['status' => 'closed']);
+            }
+
+            return $pendaftaran;
         });
     }
 }
