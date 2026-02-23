@@ -7,7 +7,7 @@ use App\Filament\Resources\Pengawas\Pages\EditPengawas;
 use App\Filament\Resources\Pengawas\Pages\ListPengawas;
 use App\Filament\Resources\Pengawas\Schemas\PengawasForm;
 use App\Filament\Resources\Pengawas\Tables\PengawasTable;
-use App\Models\Pengawas;
+use App\Models\Ujian;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,11 +16,17 @@ use Filament\Tables\Table;
 
 class PengawasResource extends Resource
 {
-    protected static ?string $model = Pengawas::class;
+    protected static ?string $model = Ujian::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
-    protected static ?string $recordTitleAttribute = 'name';
+    protected static ?string $navigationLabel = 'Jadwal & Pengawas';
+
+    protected static ?string $modelLabel = 'Jadwal Ujian';
+
+    protected static ?string $pluralModelLabel = 'Jadwal & Pengawas';
+
+    protected static ?string $recordTitleAttribute = 'tanggal_ujian';
 
     public static function form(Schema $schema): Schema
     {

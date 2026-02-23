@@ -24,6 +24,16 @@ class MahasiswasTable
                 \Filament\Tables\Columns\TextColumn::make('prodi')
                     ->label('Prodi')
                     ->sortable(),
+                \Filament\Tables\Columns\TextColumn::make('daftars.status')
+                    ->label('Status Pendaftaran')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'success' => 'success',
+                        'failed' => 'danger',
+                        default => 'gray',
+                    })
+                    ->searchable(),
             ])
             ->filters([
                 //
