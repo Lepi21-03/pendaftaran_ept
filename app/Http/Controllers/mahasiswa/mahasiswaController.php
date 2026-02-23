@@ -49,11 +49,96 @@ class MahasiswaController extends Controller
         ]);
 
         try {
-            $service->daftar($validated);
-            return redirect()->route('mahasiswa.ujian.index')
-                ->with('success', 'Pendaftaran berhasil');
+            $pendaftaran = $service->daftar($validated);
+
+            $apiKey = env('XENDIT_API_KEY');
+            if (empty($apiKey)) {
+                return back()->withInput()->withErrors('Konfigurasi Xendit API Key belum diatur pada server.');
+            }
+
+            \Xendit\Configuration::setXenditKey($apiKey);
+            $apiInstance = new \Xendit\Invoice\InvoiceApi();
+
+            $externalId = 'EPT-DAFTAR-' . $pendaftaran->id . '-' . time();
+
+            $create_invoice_request = new \Xendit\Invoice\CreateInvoiceRequest([
+                'external_id' => $externalId,
+                'description' => 'Pembayaran Pendaftaran EPT - ' . $pendaftaran->nim,
+                'amount'      => 100000,
+                'payer_email' => $pendaftaran->email,
+                'customer'    => [
+                    'given_names'  => $pendaftaran->nama_lengkap,
+                    'email'        => $pendaftaran->email,
+                    'mobile_number' => $pendaftaran->no_telp,
+                ],
+                // ✅ Redirect ke route verifikasi pembayaran setelah user bayar
+                'success_redirect_url' => route('mahasiswa.pembayaran.sukses', ['daftar_id' => $pendaftaran->id]),
+                'failure_redirect_url' => route('mahasiswa.ujian.index'),
+            ]);
+
+            $result = $apiInstance->createInvoice($create_invoice_request);
+
+            // ✅ Simpan xendit_invoice_id agar bisa diverifikasi nanti
+            $pendaftaran->update([
+                'xendit_invoice_id' => $result['id'],
+            ]);
+
+            return redirect($result['invoice_url']);
+
+        } catch (\Xendit\XenditSdkException $e) {
+            return back()->withInput()->withErrors('Xendit Error: ' . $e->getMessage());
         } catch (\Throwable $e) {
-            return back()->withErrors($e->getMessage());
+            return back()->withInput()->withErrors($e->getMessage());
+        }
+    }
+
+    /**
+     * ✅ Dipanggil otomatis oleh Xendit saat user selesai bayar.
+     * Verifikasi status invoice langsung ke API Xendit, lalu proses data mahasiswa.
+     */
+    public function pembayaranSukses(Request $request, PembayaranService $pembayaranService)
+    {
+        $daftarId = $request->query('daftar_id');
+
+        if (!$daftarId) {
+            return redirect()->route('mahasiswa.ujian.index')
+                ->withErrors('Parameter tidak valid.');
+        }
+
+        $daftar = Daftar::find($daftarId);
+
+        if (!$daftar) {
+            return redirect()->route('mahasiswa.ujian.index')
+                ->withErrors('Data pendaftaran tidak ditemukan.');
+        }
+
+        // Jika sudah diproses sebelumnya, langsung tampilkan sukses
+        if ($daftar->status === 'success') {
+            return redirect()->route('mahasiswa.ujian.index')
+                ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat.');
+        }
+
+        try {
+            // ✅ Verifikasi langsung ke Xendit API: cek status invoice
+            \Xendit\Configuration::setXenditKey(env('XENDIT_API_KEY'));
+            $apiInstance = new \Xendit\Invoice\InvoiceApi();
+            $invoice     = $apiInstance->getInvoiceById($daftar->xendit_invoice_id);
+
+            if ($invoice['status'] === 'PAID' || $invoice['status'] === 'SETTLED') {
+                // ✅ Proses: simpan pembayaran, buat kartu ujian, dan masukkan ke tabel mahasiswas
+                $pembayaranService->bayarDanGenerateKartu($daftarId);
+
+                return redirect()->route('mahasiswa.ujian.index')
+                    ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat sebagai mahasiswa peserta EPT.');
+            }
+
+            // Invoice belum dibayar
+            return redirect()->route('mahasiswa.ujian.index')
+                ->withErrors('Pembayaran belum terverifikasi. Silakan coba beberapa saat lagi.');
+
+        } catch (\Throwable $e) {
+            return redirect()->route('mahasiswa.ujian.index')
+                ->withErrors('Terjadi kesalahan saat verifikasi: ' . $e->getMessage());
         }
     }
 
@@ -62,11 +147,10 @@ class MahasiswaController extends Controller
         try {
             $kartu = $service->bayarDanGenerateKartu($daftarId);
 
-            return redirect()->route('mahasiswa.ujian.index', $kartu->Id)
-            ->with('success', 'Pembayaran berhasil, Kartu Ujian Dibuat');
-        }  catch (\Throwable $e) {
+            return redirect()->route('mahasiswa.ujian.index')
+                ->with('success', 'Pembayaran berhasil, Kartu Ujian Dibuat');
+        } catch (\Throwable $e) {
             return back()->withErrors($e->getMessage());
         }
     }
 }
-

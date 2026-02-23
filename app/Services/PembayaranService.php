@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Daftar;
 use App\Models\Pembayaran;
 use App\Models\KartuUjian;
+use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\DB;
 
 class PembayaranService
@@ -34,13 +35,28 @@ class PembayaranService
             }
 
             // 4️⃣ Generate kartu ujian
-            return KartuUjian::create([
-                'nim'          => $daftar->nim,
-                'nama_lengkap' => $daftar->nama_lengkap,
-                'bod'          => $daftar->bod,
-                'prodi'        => $daftar->prodi,
-                'id_ujian'     => $daftar->ujian_id,
+            $kartu = KartuUjian::create([
+                'daftar_id'     => $daftar->id,
+                'nomor_peserta' => 'EPT-' . date('Ym') . '-' . str_pad($daftar->id, 4, '0', STR_PAD_LEFT),
+                'generated_at'  => now(),
             ]);
+
+            // 5️⃣ Simpan atau Update Data ke Tabel Mahasiswa (INTI)
+            Mahasiswa::updateOrCreate(
+                ['nim' => $daftar->nim], // Cari berdasarkan NIM
+                [
+                    'name'  => $daftar->nama_lengkap,
+                    'prodi' => $daftar->prodi,
+                    'email' => $daftar->email,
+                    'phone' => $daftar->no_telp,
+                ]
+            );
+
+            // 6️⃣ Update status daftar jadi success
+            $daftar->status = 'success';
+            $daftar->save();
+
+            return $kartu;
         });
     }
 }
