@@ -22,6 +22,8 @@ class MasterPengawasResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserPlus;
 
+    protected static string|\UnitEnum|null $navigationGroup = 'Data pengawas-Prodi';
+
     protected static ?string $navigationLabel = 'Data Pengawas';
 
     protected static ?string $modelLabel = 'Pengawas';
