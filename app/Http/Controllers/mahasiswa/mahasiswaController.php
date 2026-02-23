@@ -23,6 +23,11 @@ class MahasiswaController extends Controller
         return view('mahasiswa.login.index');
     }
 
+    public function dokumen()
+    {
+        return view('mahasiswa.dokumen.index');
+    }
+
     public function daftar(Request $request)
     {
         $id = $request->query('ujian_id');
