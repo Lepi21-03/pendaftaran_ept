@@ -70,13 +70,7 @@
     {{-- FOOTER --}}
     @include('layouts.footer')
 
-    {{-- FLOATING HELP BUTTON --}}
-    <button
-        class="fixed bottom-8 right-8 w-14 h-14 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-95 z-40"
-        title="Help"
-    >
-        ?
-    </button>
+
 
 </body>
 </html>
