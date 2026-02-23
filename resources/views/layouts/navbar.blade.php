@@ -33,7 +33,7 @@
           <span class="material-symbols-outlined hidden dark:block">light_mode</span>
         </button>
 
-         <a class="text-slate-600 dark:text-slate-300 hover:text-primary text-sm font-medium" href="#">Log in</a>
+         <a class="text-slate-600 dark:text-slate-300 hover:text-primary text-sm font-medium" href="{{ route('mahasiswa.login') }}">Log in</a>
       </div>
 
     </div>

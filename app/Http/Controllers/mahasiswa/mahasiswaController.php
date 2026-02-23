@@ -18,6 +18,11 @@ class MahasiswaController extends Controller
         return view('mahasiswa.ujian.index', compact('ujian'));
     }
 
+    public function login()
+    {
+        return view('mahasiswa.login.index');
+    }
+
     public function daftar(Request $request)
     {
         $id = $request->query('ujian_id');
