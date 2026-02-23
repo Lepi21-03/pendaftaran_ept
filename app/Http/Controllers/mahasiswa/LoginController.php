@@ -17,7 +17,7 @@ class LoginController extends Controller
         ]);
 
         try {
-            $service->sendMagicLink($request->email, $request->npm);
+            $service->sendMagicLink($request->email, $request->nim);
             return back()-> with('success', 'Silahkan Cek Email');
         } catch (\Exception $e) {
             return back() -> withErrors($e->getMessage());

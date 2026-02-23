@@ -12,6 +12,16 @@
                 <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200">Registration Form</h2>
                 <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Please ensure all your information is accurate as it will appear on your certificate.</p>
             </div>
+
+            @if ($errors->any())
+                <div class="mb-6 p-4 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm border border-red-200 dark:border-red-800">
+                    <ul class="list-disc pl-5 space-y-1">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <form action="{{ route('mahasiswa.daftar.store') }}" class="space-y-6" method="POST">
                 @csrf
                 <input type="hidden" name="ujian_id" value="{{ $ujian->id }}">

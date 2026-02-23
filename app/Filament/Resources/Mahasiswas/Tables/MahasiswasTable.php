@@ -17,8 +17,8 @@ class MahasiswasTable
                     ->label('Nama')
                     ->sortable()
                     ->searchable(),
-                \Filament\Tables\Columns\TextColumn::make('npm')
-                    ->label('NPM')
+                \Filament\Tables\Columns\TextColumn::make('nim')
+                    ->label('NIM')
                     ->sortable()
                     ->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('prodi')

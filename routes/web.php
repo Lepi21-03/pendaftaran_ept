@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\mahasiswa\MahasiswaController;
+use App\Http\Controllers\Api\XenditWebhookController;
 
 // HALAMAN AWAL → halaman ujian
 Route::get('/', [MahasiswaController::class, 'ujian'])
@@ -20,4 +21,15 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
 
     Route::post('/daftar', [MahasiswaController::class, 'store'])
         ->name('daftar.store');
+
+    // ✅ Route ini dipanggil Xendit saat user berhasil bayar
+    Route::get('/pembayaran/sukses', [MahasiswaController::class, 'pembayaranSukses'])
+        ->name('pembayaran.sukses');
 });
+
+// =============================================
+// WEBHOOK XENDIT (Notifikasi Pembayaran)
+// CSRF sudah di-exclude di bootstrap/app.php
+// =============================================
+Route::post('/webhook/xendit', [XenditWebhookController::class, 'handle'])
+    ->name('webhook.xendit');

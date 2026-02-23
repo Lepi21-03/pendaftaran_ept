@@ -16,8 +16,8 @@ class MahasiswaForm
                     ->label('Nama Lengkap')
                     ->required()
                     ->maxLength(255),
-                TextInput::make('npm')
-                    ->label('NPM')
+                TextInput::make('nim')
+                    ->label('NIM')
                     ->required()
                     ->maxLength(20)
                     ->unique(ignoreRecord: true),

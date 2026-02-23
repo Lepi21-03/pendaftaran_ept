@@ -10,10 +10,10 @@ use Illuminate\Support\Facades\Mail;
 
 class LoginService
 {
-    public function sendMagicLink(string $email, string $npm): void
+    public function sendMagicLink(string $email, string $nim): void
     {
         $mahasiswa = Mahasiswa::where('email', $email)
-        ->where('npm', $npm)
+        ->where('nim', $nim)
         ->first();
 
         if (!$mahasiswa) {

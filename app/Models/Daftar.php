@@ -13,12 +13,14 @@ class Daftar extends Model
 
  //field yang boleh di isi user 
     protected $fillable = [
+        'ujian_id',
         'nim',
         'nama_lengkap',
         'bod',
         'prodi',
         'no_telp',
         'email',
+        'xendit_invoice_id',
     ];
 
     //field yang tidak boleh di isi user 
@@ -36,7 +38,7 @@ class Daftar extends Model
         return $this->hasOne(Pembayaran::class);
     }
 
-    public function kartu_ujian()
+    public function kartuUjian()
     {
         return $this->hasOne(KartuUjian::class);
     }
