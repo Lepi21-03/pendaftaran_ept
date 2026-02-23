@@ -74,10 +74,6 @@
             </form>
         </div>
     </div>
-    <div class="fixed bottom-6 right-6 z-40">
-    <button class="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg hover:bg-blue-700 transition-all active:scale-95">
-        <span class="material-icons">help_outline</span>
-    </button>
-</div>
+
 </div>
 @endsection

@@ -16,14 +16,7 @@
 <span class="material-symbols-outlined text-primary">calendar_month</span>
 <h2 class="text-2xl font-bold text-slate-800 dark:text-slate-100">Available Sessions</h2>
 </div>
-<div class="flex items-center gap-2 bg-white dark:bg-slate-800 p-1 rounded-lg border border-slate-200 dark:border-slate-700">
-<button class="p-1.5 rounded-md bg-slate-100 dark:bg-slate-700 text-primary">
-<span class="material-symbols-outlined block">grid_view</span>
-</button>
-<button class="p-1.5 rounded-md text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700">
-<span class="material-symbols-outlined block">view_list</span>
-</button>
-</div>
+
 </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @forelse($ujian as $u)
