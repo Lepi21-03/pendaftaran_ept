@@ -11,14 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mahasiswas', function (Blueprint $table) {
+        Schema::create('login_tokens', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('nim')->unique();
-            $table->string('prodi')->nullable();
-            $table->string('email')->nullable();
-            $table->string('phone')->nullable();
-            $table->integer('score')->nullable(); // Nilai tes untuk sertifikat
+            $table->foreignId('mahasiswas_id')->constrained('mahasiswas')->cascadeOnDelete();
+            $table->string('token')->unique();
+            $table->timestamp('expires_at');
+            $table->timestamp('used_at')->nullable();
             $table->timestamps();
         });
     }
@@ -28,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mahasiswas');
+        Schema::dropIfExists('login_tokens');
     }
 };

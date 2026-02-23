@@ -42,12 +42,19 @@
                 </div>
                 <div class="space-y-4 mb-8 flex-grow">
                     <p class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest flex items-center gap-2">
-                        <span class="material-symbols-outlined text-sm">school</span>
-                        Invigilators &amp; Teachers
+                     <svg xmlns="http://www.w3.org/2000/svg"
+                         class="w-4 h-4 text-slate-500 dark:text-slate-400"
+                         viewBox="0 0 24 24"
+                          fill="currentColor">
+                        <path fill-rule="evenodd"
+                       d="M12 2C8.686 2 6 4.686 6 8c0 4.418 6 12 6 12s6-7.582 6-12c0-3.314-2.686-6-6-6zm0 8.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"
+                              clip-rule="evenodd"/>
+                    </svg>
+                         <span class="text-sm font-medium text-slate-700 dark:text-slate-300">{{ $u->lokasi ?? 'Lokasi belum ditentukan' }}</span>
                     </p>
                     <div class="space-y-3">
                         @foreach($u->pengawas as $p)
-                        <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center text-indigo-700 dark:text-indigo-400 font-bold text-xs">
                                 {{ $p->inisial }}
                             </div>

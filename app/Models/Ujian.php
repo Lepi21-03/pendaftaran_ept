@@ -12,6 +12,7 @@ class Ujian extends Model
     protected $fillable = [
         'tanggal_ujian',
         'kuota',
+        'lokasi',
     ];
 
     protected $attributes = [

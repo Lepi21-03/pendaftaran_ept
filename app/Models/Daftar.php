@@ -9,7 +9,7 @@ class Daftar extends Model
 {
     use HasFactory;
 
-    protected $table = 'daftar';
+    protected $table = 'daftars';
 
  //field yang boleh di isi user 
     protected $fillable = [
@@ -28,7 +28,7 @@ class Daftar extends Model
 
     public function ujian()
     {
-        return $this->belongsTo(Ujian::class, 'id_ujian');
+        return $this->belongsTo(Ujian::class, 'ujian_id');
     }
 
     public function pembayaran()

@@ -17,4 +17,9 @@ class Mahasiswa extends Model
         'phone',
         'score', // For certificate
     ];
+
+    public function daftars()
+    {
+        return $this->hasMany(Daftar::class, 'nim', 'nim');
+    }
 }
