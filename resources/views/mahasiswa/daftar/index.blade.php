@@ -43,7 +43,12 @@
                     </div>
                     <div class="space-y-2">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="prodi">Study Program</label>
-                        <input type="text" id="prodi" name="prodi" placeholder="Enter your study program" class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" required value="{{ old('prodi') }}">
+                        <select id="prodi" name="prodi" class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" required>
+                            <option value="" disabled {{ old('prodi') ? '' : 'selected' }}>Select your study program</option>
+                            @foreach($prodis as $p)
+                                <option value="{{ $p->nama_prodi }}" {{ old('prodi') == $p->nama_prodi ? 'selected' : '' }}>{{ $p->nama_prodi }}</option>
+                            @endforeach
+                        </select>
                         @error('prodi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>

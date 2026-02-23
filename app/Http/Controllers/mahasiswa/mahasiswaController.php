@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Ujian;
 use App\Models\Daftar;
+use App\Models\Prodi;
 use App\Services\PendaftaranService;
 use App\Services\PembayaranService;
 
@@ -21,7 +22,8 @@ class MahasiswaController extends Controller
     {
         $id = $request->query('ujian_id');
         $ujian = Ujian::findOrFail($id);
-        return view('mahasiswa.daftar.index', compact('ujian'));
+        $prodis = Prodi::all();
+        return view('mahasiswa.daftar.index', compact('ujian', 'prodis'));
     }
 
     public function store(Request $request, PendaftaranService $service)
