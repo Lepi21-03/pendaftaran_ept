@@ -18,6 +18,10 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::get('/login', [MahasiswaController::class, 'login'])
         ->name('login');
 
+    // halaman dokumen/sertifikat
+    Route::get('/dokumen', [MahasiswaController::class, 'dokumen'])
+        ->name('dokumen');
+
     // halaman daftar
     Route::get('/daftar', [MahasiswaController::class, 'daftar'])
         ->name('daftar.index');

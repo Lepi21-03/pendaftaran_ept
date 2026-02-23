@@ -10,15 +10,17 @@
 
         <!-- Menu -->
         <div class="hidden md:flex items-center gap-6">
-          <a href="#"
-             class="text-sm font-semibold text-primary border-b-2 border-primary pb-5 mt-5">
+          <a href="{{ route('mahasiswa.ujian.index') }}"
+             class="text-sm font-semibold {{ request()->routeIs('mahasiswa.ujian.index') ? 'text-primary border-b-2 border-primary pb-5 mt-5' : 'text-slate-600 dark:text-slate-400 hover:text-primary transition-colors' }}">
             Home
           </a>
 
-          <a href="#"
-             class="text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors">
+          @auth
+          <a href="{{ route('mahasiswa.dokumen') }}"
+             class="text-sm font-medium {{ request()->routeIs('mahasiswa.dokumen') ? 'text-primary border-b-2 border-primary pb-5 mt-5' : 'text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors' }}">
             My Certificate
           </a>
+          @endauth
         </div>
 
       </div>
