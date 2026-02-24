@@ -40,4 +40,10 @@ return [
         'secret' => env('GOOGLE_RECAPTCHA_SECRET_KEY'),
     ],
 
+    'xendit' => [
+        'api_key' => env('XENDIT_API_KEY'),
+        'public_key' => env('XENDIT_PUBLIC_KEY'),
+        'callback_token' => env('XENDIT_CALLBACK_TOKEN'),
+    ],
+
 ];
