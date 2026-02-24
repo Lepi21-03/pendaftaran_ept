@@ -9,6 +9,8 @@ use App\Models\Daftar;
 use App\Models\Prodi;
 use App\Services\PendaftaranService;
 use App\Services\PembayaranService;
+use GuzzleHttp\Client;
+
 
 class MahasiswaController extends Controller
 {
@@ -57,7 +59,16 @@ class MahasiswaController extends Controller
             }
 
             \Xendit\Configuration::setXenditKey($apiKey);
-            $apiInstance = new \Xendit\Invoice\InvoiceApi();
+
+            // ✅ Gunakan cacert.pem lokal jika berjalan di lingkungan lokal untuk menghindari cURL error 60
+            $options = [];
+            if (app()->environment('local') && file_exists(storage_path('app/cacert.pem'))) {
+                $options['verify'] = storage_path('app/cacert.pem');
+            }
+
+            $guzzleClient = new Client($options);
+            $apiInstance = new \Xendit\Invoice\InvoiceApi($guzzleClient);
+
 
             $externalId = 'EPT-DAFTAR-' . $pendaftaran->id . '-' . time();
 
@@ -121,8 +132,17 @@ class MahasiswaController extends Controller
         try {
             // ✅ Verifikasi langsung ke Xendit API: cek status invoice
             \Xendit\Configuration::setXenditKey(env('XENDIT_API_KEY'));
-            $apiInstance = new \Xendit\Invoice\InvoiceApi();
+
+            // ✅ Gunakan cacert.pem lokal jika berjalan di lingkungan lokal
+            $options = [];
+            if (app()->environment('local') && file_exists(storage_path('app/cacert.pem'))) {
+                $options['verify'] = storage_path('app/cacert.pem');
+            }
+
+            $guzzleClient = new Client($options);
+            $apiInstance = new \Xendit\Invoice\InvoiceApi($guzzleClient);
             $invoice     = $apiInstance->getInvoiceById($daftar->xendit_invoice_id);
+
 
             if ($invoice['status'] === 'PAID' || $invoice['status'] === 'SETTLED') {
                 // ✅ Proses: simpan pembayaran, buat kartu ujian, dan masukkan ke tabel mahasiswas
