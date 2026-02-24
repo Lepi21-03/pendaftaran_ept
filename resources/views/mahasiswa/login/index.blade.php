@@ -34,9 +34,11 @@
                 </div>
 
                 <!-- Login Button -->
-                <button class="w-full py-3.5 px-4 bg-primary hover:bg-primary/90 text-white font-bold rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2" type="submit">
+                <button type="submit" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
                     <span>Sign In</span>
-                    <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+                    <span class="material-symbols-outlined transition-transform group-hover/btn:translate-x-1">
+                        arrow_forward
+                    </span>
                 </button>
             </form>
     </div>
