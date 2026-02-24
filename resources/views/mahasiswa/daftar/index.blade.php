@@ -71,14 +71,13 @@
                         </div>
                     </div>
                 </div>
-                <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
-                        <span class="material-icons text-lg">lock</span>
-                        Secure payment processing
-                    </div>
-                    <button class="w-full sm:w-auto bg-primary hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2" type="submit">
-                        Proceed to Payment
-                        <span class="material-icons">arrow_forward</span>
+                <div class="pt-6 flex justify-end">
+                    <button type="submit" 
+                        class="w-full sm:w-auto bg-primary hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 group/btn">
+                        <span>Proceed to Payment</span>
+                        <span class="material-symbols-outlined transition-transform group-hover/btn:translate-x-1">
+                            arrow_forward
+                        </span>
                     </button>
                 </div>
             </form>
