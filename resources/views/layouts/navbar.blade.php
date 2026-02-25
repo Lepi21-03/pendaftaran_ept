@@ -28,12 +28,39 @@
       <!-- RIGHT: Dark mode + Login -->
       <div class="flex items-center gap-4">
         <button
+          id="theme-toggle"
           class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full transition-colors"
-          onclick="document.documentElement.classList.toggle('dark')"
         >
           <span class="material-symbols-outlined block dark:hidden">dark_mode</span>
           <span class="material-symbols-outlined hidden dark:block">light_mode</span>
         </button>
+
+        <script>
+          const themeToggleBtn = document.getElementById('theme-toggle');
+          
+          themeToggleBtn.addEventListener('click', function() {
+              // if set via local storage previously
+              if (localStorage.getItem('theme')) {
+                  if (localStorage.getItem('theme') === 'light') {
+                      document.documentElement.classList.add('dark');
+                      localStorage.setItem('theme', 'dark');
+                  } else {
+                      document.documentElement.classList.remove('dark');
+                      localStorage.setItem('theme', 'light');
+                  }
+      
+              // if NOT set via local storage previously
+              } else {
+                  if (document.documentElement.classList.contains('dark')) {
+                      document.documentElement.classList.remove('dark');
+                      localStorage.setItem('theme', 'light');
+                  } else {
+                      document.documentElement.classList.add('dark');
+                      localStorage.setItem('theme', 'dark');
+                  }
+              }
+          });
+        </script>
 
          <a class="text-slate-600 dark:text-slate-300 hover:text-primary text-sm font-medium" href="{{ route('mahasiswa.login') }}">Log in</a>
       </div>
