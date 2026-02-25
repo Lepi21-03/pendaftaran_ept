@@ -23,9 +23,18 @@
             <div class="group bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 p-6 rounded-2xl hover:shadow-xl hover:shadow-blue-500/5 transition-all duration-300 relative overflow-hidden flex flex-col">
                 <div class="absolute top-0 right-0 w-24 h-24 bg-primary/5 -mr-8 -mt-8 rounded-full group-hover:scale-110 transition-transform"></div>
                 <div class="mb-6">
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 {{ $u->sisaKuota() > 5 ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400' }} text-xs font-bold uppercase tracking-wider rounded-full mb-4">
-                        <span class="w-1.5 h-1.5 rounded-full {{ $u->sisaKuota() > 5 ? 'bg-green-500 animate-pulse' : 'bg-amber-500' }}"></span>
-                        {{ $u->sisaKuota() > 5 ? 'Registration Open' : 'Filling Fast' }}
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 
+                        @if($u->sisaKuota() > 5) bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400
+                        @elseif($u->sisaKuota() > 0) bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400
+                        @else bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 @endif 
+                        text-xs font-bold uppercase tracking-wider rounded-full mb-4">
+                        <span class="w-1.5 h-1.5 rounded-full 
+                            @if($u->sisaKuota() > 5) bg-green-500 animate-pulse
+                            @elseif($u->sisaKuota() > 0) bg-amber-500
+                            @else bg-red-500 @endif"></span>
+                        @if($u->sisaKuota() > 5) Registration Open
+                        @elseif($u->sisaKuota() > 0) Filling Fast
+                        @else Registration is full @endif
                     </span>
                     <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-2 leading-tight">EPT {{ \Carbon\Carbon::parse($u->tanggal_ujian)->translatedFormat('d F Y') }}</h3>
                     <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400 text-sm font-medium">
@@ -60,10 +69,17 @@
                     </div>
                 </div>
                 <div class="mt-auto">
-                    <a href="{{ route('mahasiswa.daftar.index', ['ujian_id' => $u->id]) }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
-                        Register Now
-                        <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-                    </a>
+                    @if($u->sisaKuota() > 0)
+                        <a href="{{ route('mahasiswa.daftar.index', ['ujian_id' => $u->id]) }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
+                            Register Now
+                            <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                        </a>
+                    @else
+                        <button onclick="alert('The registration quota is full. Registration is closed.')" class="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/25 flex items-center justify-center gap-2 cursor-not-allowed">
+                            <span class="material-symbols-outlined">lock</span>
+                            Registration Closed
+                        </button>
+                    @endif
                 </div>
             </div>
             @empty
