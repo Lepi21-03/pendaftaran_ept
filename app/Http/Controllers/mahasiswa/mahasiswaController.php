@@ -7,8 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Ujian;
 use App\Models\Daftar;
 use App\Models\Prodi;
+use App\Models\Mahasiswa;
 use App\Services\PendaftaranService;
 use App\Services\PembayaranService;
+use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
 
 
@@ -72,6 +74,9 @@ class MahasiswaController extends Controller
 
             $externalId = 'EPT-DAFTAR-' . $pendaftaran->id . '-' . time();
 
+            // ✅ URL Dinamis: Menggunakan host yang sedang diakses user (localhost atau .test)
+            $baseUrl = request()->getSchemeAndHttpHost();
+
             $create_invoice_request = new \Xendit\Invoice\CreateInvoiceRequest([
                 'external_id' => $externalId,
                 'description' => 'Pembayaran Pendaftaran EPT - ' . $pendaftaran->nim,
@@ -82,9 +87,9 @@ class MahasiswaController extends Controller
                     'email'        => $pendaftaran->email,
                     'mobile_number' => $pendaftaran->no_telp,
                 ],
-                // ✅ Redirect ke route verifikasi pembayaran setelah user bayar
-                'success_redirect_url' => route('mahasiswa.pembayaran.sukses', ['daftar_id' => $pendaftaran->id]),
-                'failure_redirect_url' => route('mahasiswa.ujian.index'),
+                // ✅ Redirect dinamis
+                'success_redirect_url' => $baseUrl . route('mahasiswa.pembayaran.sukses', ['daftar_id' => $pendaftaran->id], false),
+                'failure_redirect_url' => $baseUrl . route('mahasiswa.ujian.index', [], false),
             ]);
 
             $result = $apiInstance->createInvoice($create_invoice_request);
@@ -125,6 +130,12 @@ class MahasiswaController extends Controller
 
         // Jika sudah diproses sebelumnya, langsung tampilkan sukses
         if ($daftar->status === 'success') {
+            // Auto Login Mahasiswa (Cek DB)
+            $mahasiswa = Mahasiswa::where('nim', $daftar->nim)->first();
+            if ($mahasiswa) {
+                Auth::guard('mahasiswa')->login($mahasiswa);
+            }
+            
             return redirect()->route('mahasiswa.ujian.index')
                 ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat.');
         }
@@ -146,7 +157,14 @@ class MahasiswaController extends Controller
 
             if ($invoice['status'] === 'PAID' || $invoice['status'] === 'SETTLED') {
                 // ✅ Proses: simpan pembayaran, buat kartu ujian, dan masukkan ke tabel mahasiswas
+                // Logika pemindahan data pendaftaran -> mahasiswa ada di dalam service ini
                 $pembayaranService->bayarDanGenerateKartu($daftarId);
+
+                // ✅ AUTO LOGIN: Hanya setelah data ada di DB dan tervalidasi PAID
+                $mahasiswa = Mahasiswa::where('nim', $daftar->nim)->first();
+                if ($mahasiswa) {
+                    Auth::guard('mahasiswa')->login($mahasiswa);
+                }
 
                 return redirect()->route('mahasiswa.ujian.index')
                     ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat sebagai mahasiswa peserta EPT.');
@@ -172,5 +190,14 @@ class MahasiswaController extends Controller
         } catch (\Throwable $e) {
             return back()->withErrors($e->getMessage());
         }
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('mahasiswa')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('mahasiswa.ujian.index');
     }
 }
