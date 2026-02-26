@@ -11,14 +11,14 @@
         <!-- Menu -->
         <div class="hidden md:flex items-center gap-6">
           <a href="{{ route('mahasiswa.ujian.index') }}"
-             class="text-sm font-semibold {{ request()->routeIs('mahasiswa.ujian.index') ? 'text-primary border-b-2 border-primary pb-5 mt-5' : 'text-slate-600 dark:text-slate-400 hover:text-primary transition-colors' }}">
+             class="text-sm font-semibold {{ request()->routeIs('mahasiswa.ujian.index') ? 'text-primary border-b-2 border-primary' : 'text-slate-600 dark:text-slate-400 hover:text-primary transition-colors' }}">
             Home
           </a>
 
-          @auth
+          @auth('mahasiswa')
           <a href="{{ route('mahasiswa.dokumen') }}"
-             class="text-sm font-medium {{ request()->routeIs('mahasiswa.dokumen') ? 'text-primary border-b-2 border-primary pb-5 mt-5' : 'text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors' }}">
-            My Certificate
+             class="text-sm font-medium {{ request()->routeIs('mahasiswa.dokumen') ? 'text-primary border-b-2 border-primary' : 'text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-white transition-colors' }}">
+            Documents
           </a>
           @endauth
         </div>
@@ -62,7 +62,16 @@
           });
         </script>
 
+        @guest('mahasiswa')
          <a class="text-slate-600 dark:text-slate-300 hover:text-primary text-sm font-medium" href="{{ route('mahasiswa.login') }}">Log in</a>
+        @endguest
+
+        @auth('mahasiswa')
+        <form action="{{ route('mahasiswa.logout') }}" method="POST" class="inline">
+            @csrf
+            <button type="submit" class="text-slate-600 dark:text-slate-300 hover:text-danger text-sm font-medium">Log out</button>
+        </form>
+        @endauth
       </div>
 
     </div>

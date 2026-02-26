@@ -33,6 +33,10 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     // ✅ Route ini dipanggil Xendit saat user berhasil bayar
     Route::get('/pembayaran/sukses', [MahasiswaController::class, 'pembayaranSukses'])
         ->name('pembayaran.sukses');
+
+    // Logout
+    Route::post('/logout', [MahasiswaController::class, 'logout'])
+        ->name('logout');
 });
 
 // =============================================
