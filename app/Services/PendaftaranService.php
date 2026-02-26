@@ -27,6 +27,28 @@ class PendaftaranService
                 throw new \Exception('Kuota penuh');
             }
 
+            // Cek apakah sudah ada dengan email ini di ujian_id yang sama
+            $existing = Daftar::where('ujian_id', $ujian->id)
+                ->where('email', $data['email'])
+                ->first();
+
+            if ($existing) {
+                if ($existing->status === 'success') {
+                    throw new \Exception('Email ini sudah terdaftar dan berhasil melakukan pembayaran pada ujian ini.');
+                }
+
+                // Jika masih pending, kita bisa update datanya
+                $existing->update([
+                    'nim'          => $data['nim'],
+                    'nama_lengkap' => $data['nama_lengkap'],
+                    'bod'          => $data['bod'],
+                    'prodi'        => $data['prodi'],
+                    'no_telp'      => $data['no_telp'],
+                ]);
+
+                return $existing;
+            }
+
             // Simpan pendaftaran (FIELD TERKONTROL)
             $pendaftaran = Daftar::create([
                 'ujian_id'     => $ujian->id,

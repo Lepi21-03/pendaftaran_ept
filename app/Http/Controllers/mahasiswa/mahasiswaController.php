@@ -71,11 +71,11 @@ class MahasiswaController extends Controller
             $guzzleClient = new Client($options);
             $apiInstance = new \Xendit\Invoice\InvoiceApi($guzzleClient);
 
-
             $externalId = 'EPT-DAFTAR-' . $pendaftaran->id . '-' . time();
 
-            // ✅ URL Dinamis: Menggunakan host yang sedang diakses user (localhost atau .test)
-            $baseUrl = request()->getSchemeAndHttpHost();
+            // ✅ URL redirect menggunakan route() langsung — APP_URL dari .env sudah dihandle Laravel
+            $successUrl = route('mahasiswa.pembayaran.sukses', ['daftar_id' => $pendaftaran->id]);
+            $failureUrl = route('mahasiswa.ujian.index');
 
             $create_invoice_request = new \Xendit\Invoice\CreateInvoiceRequest([
                 'external_id' => $externalId,
@@ -83,13 +83,12 @@ class MahasiswaController extends Controller
                 'amount'      => 100000,
                 'payer_email' => $pendaftaran->email,
                 'customer'    => [
-                    'given_names'  => $pendaftaran->nama_lengkap,
-                    'email'        => $pendaftaran->email,
+                    'given_names'   => $pendaftaran->nama_lengkap,
+                    'email'         => $pendaftaran->email,
                     'mobile_number' => $pendaftaran->no_telp,
                 ],
-                // ✅ Redirect dinamis
-                'success_redirect_url' => $baseUrl . route('mahasiswa.pembayaran.sukses', ['daftar_id' => $pendaftaran->id], false),
-                'failure_redirect_url' => $baseUrl . route('mahasiswa.ujian.index', [], false),
+                'success_redirect_url' => $successUrl,
+                'failure_redirect_url' => $failureUrl,
             ]);
 
             $result = $apiInstance->createInvoice($create_invoice_request);
