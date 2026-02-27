@@ -219,14 +219,20 @@ class MahasiswaController extends Controller
         }
     }
 
-    public function logout(Request $request)
+   public function logout(Request $request)
     {
-        Auth::guard('mahasiswa')->logout();
+    Auth::guard('mahasiswa')->logout();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+    // Hapus semua data di dalam session
+    $request->session()->flush(); 
 
-        return redirect()->route('mahasiswa.ujian.index');
+    // Hapus session file/record dan buat ID baru
+    $request->session()->invalidate();
+
+    // Buat CSRF token baru agar yang lama tidak bisa di-hijack
+    $request->session()->regenerateToken();
+
+    return redirect()->route('mahasiswa.ujian.index');
     }
 
 }
