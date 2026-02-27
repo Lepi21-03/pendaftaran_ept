@@ -19,6 +19,10 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::get('/login', [MahasiswaController::class, 'login'])
         ->name('login');
 
+    Route::post('/login', [MahasiswaController::class, 'loginStore'])
+        ->name('login.store');
+
+
     // halaman dokumen/sertifikat
     Route::get('/dokumen', [MahasiswaController::class, 'dokumen'])
         ->name('dokumen');

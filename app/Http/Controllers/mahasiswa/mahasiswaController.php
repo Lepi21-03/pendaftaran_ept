@@ -27,6 +27,33 @@ class MahasiswaController extends Controller
         return view('mahasiswa.login.index');
     }
 
+    public function loginStore(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required', // Ini adalah NIM dari form
+        ]);
+
+        $mahasiswa = Mahasiswa::where('email', $credentials['email'])
+            ->where('nim', $credentials['password'])
+            ->first();
+
+        if ($mahasiswa) {
+            Auth::guard('mahasiswa')->login($mahasiswa);
+
+            // Regenerate session setelah login berhasil (Keamanan)
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('mahasiswa.ujian.index'))
+                ->with('success', 'Selamat datang kembali, ' . $mahasiswa->name);
+        }
+
+        return back()->withErrors([
+            'email' => 'Email atau NIM tidak sesuai dengan data kami.',
+        ])->onlyInput('email');
+    }
+
+
     public function dokumen()
     {
         $mahasiswa = Auth::guard('mahasiswa')->user();
@@ -195,9 +222,11 @@ class MahasiswaController extends Controller
     public function logout(Request $request)
     {
         Auth::guard('mahasiswa')->logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('mahasiswa.ujian.index');
     }
+
 }
