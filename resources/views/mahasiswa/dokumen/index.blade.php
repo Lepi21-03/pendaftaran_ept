@@ -41,7 +41,7 @@
         <span class="material-symbols-outlined text-[16px]">chevron_right</span>
         <span class="text-slate-900 dark:text-slate-100 font-medium">My Certificates</span>
         <span class="material-symbols-outlined text-[16px]">chevron_right</span>
-        <span class="text-slate-900 dark:text-slate-100 font-medium">EPT-2023-8842</span>
+        <span class="text-slate-900 dark:text-slate-100 font-medium">Sertifikat {{ $mahasiswa->nim ?? '-' }}</span>
     </nav>
 
     <!-- Certificate Header (Hidden on Print) -->
@@ -84,50 +84,35 @@
                 <!-- Recipient Name -->
                 <div class="mb-10 w-full max-w-2xl">
                     <div class="text-4xl md:text-6xl font-bold text-slate-900 py-4 border-b-2 border-primary/30 inline-block w-full uppercase">
-                        Alexander Raymond
+                        {{ $mahasiswa->name ?? '-' }}
                     </div>
+                    <p class="mt-2 text-base text-slate-500 font-medium tracking-widest">
+                        NIM: {{ $mahasiswa->nim ?? '-' }}
+                    </p>
                     <p class="mt-6 text-slate-600 max-w-lg mx-auto leading-relaxed">
                         telah berhasil menunjukkan kemahiran bahasa Inggris tingkat lanjut melalui 
                         <span class="font-bold">English Proficiency Test (EPT)</span> yang diselenggarakan di bawah kondisi standar.
                     </p>
                 </div>
 
-                <!-- Scores Grid -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-4xl mb-12">
-                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-lg">
-                        <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Listening</p>
-                        <p class="text-2xl font-black text-slate-900">88</p>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-lg">
-                        <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Reading</p>
-                        <p class="text-2xl font-black text-slate-900">92</p>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-lg">
-                        <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Writing</p>
-                        <p class="text-2xl font-black text-slate-900">85</p>
-                    </div>
-                    <div class="bg-slate-50 border border-slate-100 p-4 rounded-lg">
-                        <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Speaking</p>
-                        <p class="text-2xl font-black text-slate-900">94</p>
+                <!-- Skor Akhir -->
+                <div class="flex justify-center w-full max-w-4xl mb-12">
+                    <div class="bg-slate-50 border-2 border-primary/20 p-6 rounded-xl w-full max-w-sm text-center">
+                        <p class="text-[11px] uppercase font-bold text-slate-400 tracking-widest mb-2">Skor EPT</p>
+                        <p class="text-5xl font-black text-primary">{{ $mahasiswa->score ?? '-' }}</p>
                     </div>
                 </div>
 
-                <!-- Total Score & Date -->
+                <!-- Tanggal -->
                 <div class="flex flex-col md:flex-row items-center gap-12 mb-12">
-                    <div class="flex flex-col items-center">
-                        <div class="w-32 h-32 rounded-full border-8 border-primary flex flex-col items-center justify-center bg-primary/5">
-                            <span class="text-3xl font-black text-primary leading-none">359</span>
-                            <span class="text-[10px] font-bold text-primary uppercase mt-1">Total Score</span>
-                        </div>
-                    </div>
                     <div class="text-center md:text-left">
                         <div class="mb-4">
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Test Date</p>
-                            <p class="text-lg font-bold text-slate-900">October 24, 2023</p>
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Tanggal Diterbitkan</p>
+                            <p class="text-lg font-bold text-slate-900">{{ now()->translatedFormat('d F Y') }}</p>
                         </div>
                         <div>
-                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Location</p>
-                            <p class="text-lg font-bold text-slate-900">Regional Center</p>
+                            <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Program Studi</p>
+                            <p class="text-lg font-bold text-slate-900">{{ $mahasiswa->prodi ?? '-' }}</p>
                         </div>
                     </div>
                 </div>
@@ -146,28 +131,28 @@
                         </div>
                         <div class="text-left">
                             <p class="text-[10px] uppercase font-bold text-slate-400 tracking-widest mb-1">Certificate ID</p>
-                            <p class="text-sm font-mono font-bold text-slate-900">EPT-CERT-2023-8842-X8Y</p>
-                            <p class="text-[10px] text-slate-400 mt-1">Validasi di verify.ept-portal.org</p>
+                            <p class="text-sm font-mono font-bold text-slate-900">EPT-CERT-{{ $mahasiswa->nim ?? 'N/A' }}</p>
+                            <p class="text-[10px] text-slate-400 mt-1">NIM: {{ $mahasiswa->nim ?? '-' }}</p>
                         </div>
                     </div>
                     <!-- Signatures -->
                     <div class="flex gap-12">
                         <div class="text-center">
                             <div class="mb-2 h-12 flex items-end justify-center">
-                                <p class="font-serif italic text-2xl text-slate-800">Sarah Jenkins</p>
+                                <p class="font-serif italic text-2xl text-slate-800">_______________</p>
                             </div>
-                            <div class="w-32 border-t border-slate-300 mx-auto pt-2">
-                                <p class="text-[10px] font-bold text-slate-500 uppercase">Director of Studies</p>
+                            <div class="w-40 border-t border-slate-300 mx-auto pt-2">
+                                <p class="text-[10px] font-bold text-slate-500 uppercase">Kepala Pusat Bahasa</p>
                             </div>
                         </div>
                         <div class="text-center">
                             <div class="mb-2 h-12 flex items-end justify-center">
-                                <p class="font-serif italic text-2xl text-slate-800">Dr. Marc Thorne</p>
+                                <p class="font-serif italic text-2xl text-slate-800">_______________</p>
                             </div>
-                            <div class="w-32 border-t border-slate-300 mx-auto pt-2">
-                                <p class="text-[10px] font-bold text-slate-500 uppercase">Head Examiner</p>
+                            <div class="w-40 border-t border-slate-300 mx-auto pt-2">
+                                <p class="text-[10px] font-bold text-slate-500 uppercase">Koordinator EPT</p>
                             </div>
-                        </div>
+        		        </div>
                     </div>
                     <!-- QR Code Placeholder -->
                     <div class="bg-slate-100 p-2 rounded">
@@ -206,7 +191,7 @@
             </p>
             <div class="p-4 bg-primary/5 rounded-lg border border-primary/10">
                 <p class="text-xs font-bold text-primary uppercase mb-1">URL Verifikasi</p>
-                <p class="text-sm font-mono break-all text-slate-700 dark:text-slate-300">https://ept-portal.org/verify/EPT-2023-8842-X8Y</p>
+                <p class="text-sm font-mono break-all text-slate-700 dark:text-slate-300">EPT-CERT-{{ $mahasiswa->nim ?? 'N/A' }}</p>
             </div>
         </div>
     </section>

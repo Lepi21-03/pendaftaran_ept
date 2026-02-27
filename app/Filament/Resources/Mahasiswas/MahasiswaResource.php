@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Mahasiswas;
 
 use App\Filament\Resources\Mahasiswas\Pages\CreateMahasiswa;
 use App\Filament\Resources\Mahasiswas\Pages\EditMahasiswa;
+use App\Filament\Resources\Mahasiswas\Pages\ImportNilaiEpt;
 use App\Filament\Resources\Mahasiswas\Pages\ListMahasiswas;
 use App\Filament\Resources\Mahasiswas\Schemas\MahasiswaForm;
 use App\Filament\Resources\Mahasiswas\Tables\MahasiswasTable;
@@ -46,9 +47,10 @@ class MahasiswaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListMahasiswas::route('/'),
-            'create' => CreateMahasiswa::route('/create'),
-            'edit' => EditMahasiswa::route('/{record}/edit'),
+            'index'         => ListMahasiswas::route('/'),
+            'create'        => CreateMahasiswa::route('/create'),
+            'edit'          => EditMahasiswa::route('/{record}/edit'),
+            'import-nilai'  => ImportNilaiEpt::route('/import-nilai'),
         ];
     }
 }
