@@ -13,6 +13,14 @@ class MahasiswasTable
     {
         return $table
             ->columns([
+                \Filament\Tables\Columns\ImageColumn::make('avatar')
+                    ->label('Foto')
+                    ->circular()
+                    ->getStateUsing(fn ($record) => $record->avatar
+                        ?: 'https://ui-avatars.com/api/?name=' . urlencode($record->name) . '&background=6366f1&color=fff&size=64'
+                    )
+                    ->extraImgAttributes(['referrerpolicy' => 'no-referrer']),
+
                 \Filament\Tables\Columns\TextColumn::make('name')
                     ->label('Nama')
                     ->sortable()
@@ -21,9 +29,17 @@ class MahasiswasTable
                     ->label('NIM')
                     ->sortable()
                     ->searchable(),
+                \Filament\Tables\Columns\TextColumn::make('email')
+                    ->label('Akun Google')
+                    ->icon('heroicon-o-envelope')
+                    ->color('primary')
+                    ->copyable()
+                    ->copyMessage('Email disalin!')
+                    ->searchable(),
                 \Filament\Tables\Columns\TextColumn::make('prodi')
                     ->label('Prodi')
                     ->sortable(),
+
                 \Filament\Tables\Columns\TextColumn::make('daftars.status')
                     ->label('Status Pendaftaran')
                     ->badge()
