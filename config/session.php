@@ -127,7 +127,7 @@ return [
     |
     */
 
-    'cookie' => 'ept_session',
+    'cookie' => 'y234k',
 
 
     /*
