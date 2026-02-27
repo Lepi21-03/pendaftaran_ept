@@ -49,3 +49,14 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
 // =============================================
 Route::post('/webhook/xendit', [XenditWebhookController::class, 'handle'])
     ->name('webhook.xendit');
+
+// =============================================
+// DOWNLOAD SERTIFIKAT (dari halaman import nilai)
+// =============================================
+Route::get('/sertifikat/{mahasiswa}/download', function (\App\Models\Mahasiswa $mahasiswa) {
+    return response()->streamDownload(function () use ($mahasiswa) {
+        echo \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.sertifikat', ['record' => $mahasiswa])
+            ->setPaper('a4', 'landscape')
+            ->output();
+    }, 'Sertifikat-EPT-' . $mahasiswa->name . '.pdf');
+})->name('sertifikat.download');

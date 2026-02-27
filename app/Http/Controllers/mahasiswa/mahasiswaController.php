@@ -56,7 +56,8 @@ class MahasiswaController extends Controller
 
     public function dokumen()
     {
-        return view('mahasiswa.dokumen.index');
+        $mahasiswa = Auth::guard('mahasiswa')->user();
+        return view('mahasiswa.dokumen.index', compact('mahasiswa'));
     }
 
     public function daftar(Request $request)

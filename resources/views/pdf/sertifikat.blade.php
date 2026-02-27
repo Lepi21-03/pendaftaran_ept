@@ -89,7 +89,7 @@
 
         <div class="score-box">
             <span>Dengan Skor Akhir:</span><br>
-            <span class="score-value">550</span> <!-- Ganti dengan $record->score jika ada field score -->
+            <span class="score-value">{{ $record->score ?? '-' }}</span>
         </div>
 
         <div class="signature">
