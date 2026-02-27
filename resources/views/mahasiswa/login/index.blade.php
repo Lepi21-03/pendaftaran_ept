@@ -11,14 +11,21 @@
                 <p class="text-slate-500 dark:text-slate-400">Please enter your details to sign in.</p>
             </div>
             
-            <form action="#" class="space-y-6" method="POST">
+            <form action="{{ route('mahasiswa.login.store') }}" class="space-y-6" method="POST">
                 @csrf
+
+                @if($errors->any())
+                    <div class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                        {{ $errors->first() }}
+                    </div>
+                @endif
+                
                 <!-- Email Field -->
                 <div class="space-y-2">
                     <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 block" for="email">Email Address</label>
                     <div class="relative group">
                         <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-primary transition-colors">mail</span>
-                        <input class="w-full pl-11 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400" id="email" name="email" placeholder="yourname@gmail.com" required="" type="email"/>
+                        <input class="w-full pl-11 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400" id="email" name="email" value="{{ old('email') }}" placeholder="yourname@gmail.com" required="" type="email"/>
                     </div>
                 </div>
 
@@ -41,6 +48,7 @@
                     </span>
                 </button>
             </form>
+
     </div>
 </main>
 @endsection
