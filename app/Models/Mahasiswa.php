@@ -15,9 +15,12 @@ class Mahasiswa extends Authenticatable
         'prodi',
         'email',
         'phone',
-        'score',        // For certificate
-        'google_id',    // Google OAuth ID
-        'avatar',       // URL foto profil Google
+        'score',            // Total score
+        'score_listening',   // Listening score
+        'score_structure',   // Structure and Writing Expression score
+        'score_reading',     // Reading score
+        'google_id',        // Google OAuth ID
+        'avatar',           // URL foto profil Google
     ];
 
     public function daftars()
