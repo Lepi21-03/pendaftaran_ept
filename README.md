@@ -90,3 +90,8 @@ laravel-12/
 Ikuti struktur yang sudah ditentukan agar project tetap rapi dan mudah dikembangkan.
 
 
+## From vin
+
+- Semua  yang terintegrasi dengan API Masih milik King Arsenal jika bermasalah mohon pakai api Pribadi
+
+

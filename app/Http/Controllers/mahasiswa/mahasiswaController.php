@@ -90,6 +90,7 @@ class MahasiswaController extends Controller
             'ujian_id'      => 'required|exists:ujians,id',
             'nim'           => 'required',
             'nama_lengkap'  => 'required',
+            'tempat_lahir'  => 'required',
             'bod'           => 'required|date',
             'prodi'         => 'required',
             'no_telp'       => 'required',

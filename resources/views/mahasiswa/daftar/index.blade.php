@@ -47,6 +47,11 @@
                         @error('no_telp') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                     <div class="space-y-2">
+                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="tempat_lahir">Born In (Place of Birth)</label>
+                        <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="tempat_lahir" name="tempat_lahir" placeholder="Enter your place of birth" required="" type="text" value="{{ old('tempat_lahir') }}"/>
+                        @error('tempat_lahir') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    </div>
+                    <div class="space-y-2">
                         <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="bod">Date of Birth (DOB) </label>
                         <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="bod" name="bod" required="" type="date" value="{{ old('bod') }}"/>
                         @error('bod') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror

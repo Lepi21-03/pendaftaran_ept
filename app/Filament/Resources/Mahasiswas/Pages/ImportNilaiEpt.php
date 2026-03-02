@@ -5,22 +5,23 @@ namespace App\Filament\Resources\Mahasiswas\Pages;
 use App\Filament\Resources\Mahasiswas\MahasiswaResource;
 use App\Imports\NilaiEptImport;
 use Filament\Actions\Action;
-use Filament\Forms\Components\FileUpload;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
-use Filament\Schemas\Schema;
 use Maatwebsite\Excel\Facades\Excel;
+use Livewire\WithFileUploads;
 
 /**
  * Halaman custom Filament v5 untuk import nilai EPT dari Excel.
  *
- * Pola Filament v5:
- *  - form(Schema $schema): Schema  → mendefinisikan form
- *  - public ?array $data = [];     → state form disimpan di sini (->statePath('data'))
- *  - $this->form->fill() / getState() → bekerja normal
+ * PENDEKATAN BARU:
+ * Menggunakan Livewire WithFileUploads trait langsung (tanpa Filament FileUpload),
+ * sehingga file bisa di-upload via $wire.upload() dari JavaScript dan
+ * tidak ada masalah input hilang / tidak bisa di-isi ulang.
  */
 class ImportNilaiEpt extends Page
 {
+    use WithFileUploads;
+
     protected static string $resource = MahasiswaResource::class;
 
     protected static ?string $title = 'Import Nilai EPT dari Excel';
@@ -30,47 +31,25 @@ class ImportNilaiEpt extends Page
         return 'filament.pages.import-nilai-ept';
     }
 
-    // ─── State Form (wajib array, dipakai statePath) ───────
-    /** @var array<string, mixed>|null */
-    public ?array $data = [];
+    // ─── State Upload ──────────────────────────────────────
+    /** File sementara dari Livewire (TemporaryUploadedFile) */
+    public $fileExcel = null;
 
     // ─── State Hasil ───────────────────────────────────────
     public array $hasil       = [];
     public bool  $sudahProses = false;
 
-    // ─── Inisialisasi ──────────────────────────────────────
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-
-    /**
-     * Definisi form – Filament v5 pakai Schema bukan Form.
-     */
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                FileUpload::make('fileExcel')
-                    ->label('File Excel (.xlsx / .xls)')
-                    ->acceptedFileTypes([
-                        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                        'application/vnd.ms-excel',
-                    ])
-                    ->required()
-                    ->disk('local')
-                    ->directory('excel-imports')
-                    ->helperText('Format kolom Excel: nama | nim | nilai'),
-            ])
-            ->statePath('data');   // ← $this->data['fileExcel']
-    }
+    // ─── Validasi ──────────────────────────────────────────
+    protected array $rules = [
+        'fileExcel' => 'required|file|mimes:xlsx,xls,csv|max:10240',
+    ];
 
     // ─── Aksi ──────────────────────────────────────────────
     public function prosesImport(): void
     {
-        $formData = $this->form->getState();
+        $this->validate();
 
-        if (empty($formData['fileExcel'])) {
+        if (!$this->fileExcel) {
             Notification::make()
                 ->title('File belum dipilih!')
                 ->danger()
@@ -78,16 +57,10 @@ class ImportNilaiEpt extends Page
             return;
         }
 
-        $relativePath = $formData['fileExcel'];
+        // Dapatkan path absolut dari TemporaryUploadedFile Livewire
+        $fullPath = $this->fileExcel->getRealPath();
 
-        // Coba path private (Laravel 11+)
-        $fullPath = storage_path('app/private/' . $relativePath);
-
-        if (! file_exists($fullPath)) {
-            $fullPath = storage_path('app/' . $relativePath);
-        }
-
-        if (! file_exists($fullPath)) {
+        if (!$fullPath || !file_exists($fullPath)) {
             Notification::make()
                 ->title('File tidak ditemukan di server. Coba upload ulang.')
                 ->danger()
@@ -100,6 +73,9 @@ class ImportNilaiEpt extends Page
 
         $this->hasil       = $import->hasil;
         $this->sudahProses = true;
+
+        // Reset file setelah proses selesai
+        $this->fileExcel = null;
 
         $berhasil       = collect($this->hasil)->where('status', 'berhasil')->count();
         $tidakDitemukan = collect($this->hasil)->where('status', 'tidak_ditemukan')->count();
