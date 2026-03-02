@@ -27,7 +27,7 @@ class LoginController extends Controller
     public function verify(string $token, LoginService $service)
     {
         $mahasiswa = $service->verifyToken($token);
-        Auth::login($mahasiswa);
+        Auth::guard('mahasiswa')->login($mahasiswa);
         return redirect()->route('mahasiswa.ujian.index');
     }
 }

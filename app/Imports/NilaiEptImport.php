@@ -21,7 +21,7 @@ class NilaiEptImport implements ToCollection, WithHeadingRow
             // Ambil data dari kolom Excel (case-insensitive karena WithHeadingRow)
             $nimExcel  = trim((string) ($row['nim']   ?? $row['NIM']   ?? ''));
             $namaExcel = trim((string) ($row['nama']  ?? $row['Nama']  ?? $row['name'] ?? ''));
-            $nilai     = (int) ($row['nilai'] ?? $row['Nilai'] ?? $row['score'] ?? 0);
+            $nilai     = (int) ($row['nilai'] ?? $row['Nilai'] ?? $row['score'] ?? $row['nilai_ept'] ?? 0);
 
             if (empty($nimExcel)) {
                 continue; // Lewati baris kosong

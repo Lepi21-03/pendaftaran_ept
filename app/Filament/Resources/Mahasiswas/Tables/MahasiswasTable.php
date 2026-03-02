@@ -62,11 +62,22 @@ class MahasiswasTable
                     ->icon('heroicon-o-identification')
                     ->color('info')
                     ->action(function ($record) {
-                        return response()->streamDownload(function () use ($record) {
-                            echo \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.kartu-ujian', ['record' => $record])
-                                ->setPaper('a5', 'portrait')
+                        // Ambil pendaftaran terakhir yang sukses
+                        $daftar = $record->daftars()->where('status', 'success')->with('ujian')->latest()->first();
+                        
+                        if (!$daftar) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Pendaftaran tidak ditemukan')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+
+                        return response()->streamDownload(function () use ($daftar) {
+                            echo \Barryvdh\DomPDF\Facade\Pdf::loadView('mahasiswa.dokumen.kartu-ujian', ['record' => $daftar])
+                                ->setPaper([0, 0, 420.94, 283.46], 'landscape') // 14.85cm x 10cm
                                 ->output();
-                        }, 'Kartu-Ujian-' . $record->name . '.pdf');
+                        }, 'Kartu-Ujian-' . $daftar->nim . '.pdf');
                     }),
 
                 \Filament\Actions\Action::make('cetak_sertifikat')
@@ -74,11 +85,20 @@ class MahasiswasTable
                     ->icon('heroicon-o-academic-cap')
                     ->color('success')
                     ->action(function ($record) {
+                        // Cek apakah nilai sudah ada
+                        if (!$record->score) {
+                            \Filament\Notifications\Notification::make()
+                                ->title('Anda belum menambahkan nilai')
+                                ->danger()
+                                ->send();
+                            return;
+                        }
+
                         return response()->streamDownload(function () use ($record) {
-                            echo \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.sertifikat', ['record' => $record])
+                            echo \Barryvdh\DomPDF\Facade\Pdf::loadView('mahasiswa.dokumen.sertifikat', ['mahasiswa' => $record])
                                 ->setPaper('a4', 'landscape')
                                 ->output();
-                        }, 'Sertifikat-' . $record->name . '.pdf');
+                        }, 'Sertifikat-' . $record->nim . '.pdf');
                     }),
             ])
             ->bulkActions([
