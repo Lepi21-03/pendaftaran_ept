@@ -12,6 +12,7 @@ use App\Services\PendaftaranService;
 use App\Services\PembayaranService;
 use Illuminate\Support\Facades\Auth;
 use GuzzleHttp\Client;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class MahasiswaController extends Controller
@@ -56,8 +57,23 @@ class MahasiswaController extends Controller
 
     public function dokumen()
     {
-        $mahasiswa = Auth::guard('mahasiswa')->user();
-        return view('mahasiswa.dokumen.index', compact('mahasiswa'));
+        $authenticatedUser = Auth::guard('mahasiswa')->user();
+
+        if (!$authenticatedUser) {
+            return redirect()->route('mahasiswa.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // Re-fetch mahasiswa dari database untuk memastikan data (terutama score) paling update
+        $mahasiswa = Mahasiswa::find($authenticatedUser->id);
+
+        // Ambil pendaftaran terakhir yang sukses untuk menampilkan kartu ujian
+        $pendaftaran = Daftar::where('nim', $mahasiswa->nim)
+            ->where('status', 'success')
+            ->with(['ujian', 'kartuUjian'])
+            ->latest()
+            ->first();
+
+        return view('mahasiswa.dokumen.index', compact('mahasiswa', 'pendaftaran'));
     }
 
     public function daftar(Request $request)
@@ -163,7 +179,7 @@ class MahasiswaController extends Controller
             if ($mahasiswa) {
                 Auth::guard('mahasiswa')->login($mahasiswa);
             }
-            
+
             return redirect()->route('mahasiswa.ujian.index')
                 ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat.');
         }
@@ -182,10 +198,8 @@ class MahasiswaController extends Controller
             $apiInstance = new \Xendit\Invoice\InvoiceApi($guzzleClient);
             $invoice     = $apiInstance->getInvoiceById($daftar->xendit_invoice_id);
 
-
             if ($invoice['status'] === 'PAID' || $invoice['status'] === 'SETTLED') {
                 // ✅ Proses: simpan pembayaran, buat kartu ujian, dan masukkan ke tabel mahasiswas
-                // Logika pemindahan data pendaftaran -> mahasiswa ada di dalam service ini
                 $pembayaranService->bayarDanGenerateKartu($daftarId);
 
                 // ✅ AUTO LOGIN: Hanya setelah data ada di DB dan tervalidasi PAID
@@ -220,20 +234,98 @@ class MahasiswaController extends Controller
         }
     }
 
-   public function logout(Request $request)
+    /**
+     * ✅ Download Kartu Ujian sebagai PDF.
+     * Nama file: KartuUjian-EPT-{NIM}.pdf agar unik per mahasiswa.
+     */
+    public function downloadKartuUjian()
     {
-    Auth::guard('mahasiswa')->logout();
+        $authenticatedUser = Auth::guard('mahasiswa')->user();
 
-    // Hapus semua data di dalam session
-    $request->session()->flush(); 
+        if (!$authenticatedUser) {
+            return redirect()->route('mahasiswa.login')
+                ->with('error', 'Silakan login terlebih dahulu.');
+        }
 
-    // Hapus session file/record dan buat ID baru
-    $request->session()->invalidate();
+        // Ambil data mahasiswa fresh dari DB
+        $mahasiswa = Mahasiswa::findOrFail($authenticatedUser->id);
 
-    // Buat CSRF token baru agar yang lama tidak bisa di-hijack
-    $request->session()->regenerateToken();
+        // Ambil pendaftaran terakhir berstatus success beserta relasi ujian
+        $pendaftaran = Daftar::where('nim', $mahasiswa->nim)
+            ->where('status', 'success')
+            ->with(['ujian', 'kartuUjian'])
+            ->latest()
+            ->first();
 
-    return redirect()->route('mahasiswa.ujian.index');
+        if (!$pendaftaran) {
+            return redirect()->route('mahasiswa.dokumen')
+                ->with('error', 'Kartu ujian belum tersedia. Pastikan pembayaran sudah diverifikasi.');
+        }
+
+        // Generate PDF dari view kartu-ujian.blade.php yang sudah ada
+        // View ini sudah menggunakan inline CSS, cocok untuk DomPDF
+        // Variabel yang dipakai di view adalah $record
+        $pdf = Pdf::loadView('mahasiswa.dokumen.kartu-ujian', ['record' => $pendaftaran])
+            ->setPaper('a4', 'portrait');
+
+        // Nama file menggunakan Nama Mahasiswa agar lebih personal
+        $namaClean = str_replace([' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $mahasiswa->name);
+        $namaFile = 'KartuUjian-EPT-' . $namaClean . '.pdf';
+
+        return response($pdf->output(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $namaFile . '"',
+        ]);
     }
 
+    /**
+     * ✅ Download Sertifikat sebagai PDF.
+     * Nama file: Sertifikat-EPT-{NIM}.pdf agar unik per mahasiswa.
+     */
+    public function downloadSertifikat()
+    {
+        $authenticatedUser = Auth::guard('mahasiswa')->user();
+
+        if (!$authenticatedUser) {
+            return redirect()->route('mahasiswa.login')
+                ->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // Ambil data mahasiswa fresh dari DB agar score pasti ada
+        $mahasiswa = Mahasiswa::findOrFail($authenticatedUser->id);
+
+        if (!$mahasiswa->score || $mahasiswa->score <= 0) {
+            return redirect()->route('mahasiswa.dokumen')
+                ->with('error', 'Sertifikat belum tersedia. Tunggu Admin menginput skor EPT Anda.');
+        }
+
+        // Generate PDF dari view sertifikat.blade.php (sudah menggunakan inline CSS, kompatibel DomPDF)
+        $pdf = Pdf::loadView('mahasiswa.dokumen.sertifikat', ['mahasiswa' => $mahasiswa])
+            ->setPaper('a4', 'portrait');
+
+        // Nama file menggunakan Nama Mahasiswa
+        $namaClean = str_replace([' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $mahasiswa->name);
+        $namaFile = 'Sertifikat-EPT-' . $namaClean . '.pdf';
+
+        return response($pdf->output(), 200, [
+            'Content-Type'        => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $namaFile . '"',
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('mahasiswa')->logout();
+
+        // Hapus semua data di dalam session
+        $request->session()->flush();
+
+        // Hapus session file/record dan buat ID baru
+        $request->session()->invalidate();
+
+        // Buat CSRF token baru agar yang lama tidak bisa di-hijack
+        $request->session()->regenerateToken();
+
+        return redirect()->route('mahasiswa.ujian.index');
+    }
 }

@@ -22,10 +22,17 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::post('/login', [MahasiswaController::class, 'loginStore'])
         ->name('login.store');
 
-
     // halaman dokumen/sertifikat
     Route::get('/dokumen', [MahasiswaController::class, 'dokumen'])
         ->name('dokumen');
+
+    // ✅ Download Kartu Ujian sebagai PDF (menggunakan NIM sebagai nama file agar unik)
+    Route::get('/dokumen/kartu-ujian/download', [MahasiswaController::class, 'downloadKartuUjian'])
+        ->name('dokumen.kartu-ujian.download');
+
+    // ✅ Download Sertifikat sebagai PDF (menggunakan NIM sebagai nama file agar unik)
+    Route::get('/dokumen/sertifikat/download', [MahasiswaController::class, 'downloadSertifikat'])
+        ->name('dokumen.sertifikat.download');
 
     // halaman daftar
     Route::get('/daftar', [MahasiswaController::class, 'daftar'])
@@ -51,12 +58,12 @@ Route::post('/webhook/xendit', [XenditWebhookController::class, 'handle'])
     ->name('webhook.xendit');
 
 // =============================================
-// DOWNLOAD SERTIFIKAT (dari halaman import nilai)
+// DOWNLOAD SERTIFIKAT LAMA (dari halaman import nilai — tetap dipertahankan)
 // =============================================
 Route::get('/sertifikat/{mahasiswa}/download', function (\App\Models\Mahasiswa $mahasiswa) {
     return response()->streamDownload(function () use ($mahasiswa) {
-        echo \Barryvdh\DomPDF\Facade\Pdf::loadView('pdf.sertifikat', ['record' => $mahasiswa])
-            ->setPaper('a4', 'landscape')
+        echo \Barryvdh\DomPDF\Facade\Pdf::loadView('mahasiswa.dokumen.sertifikat', ['mahasiswa' => $mahasiswa])
+            ->setPaper('a4', 'portrait')
             ->output();
-    }, 'Sertifikat-EPT-' . $mahasiswa->name . '.pdf');
+    }, 'Sertifikat-EPT-' . $mahasiswa->nim . '.pdf');
 })->name('sertifikat.download');
