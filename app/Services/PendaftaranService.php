@@ -41,6 +41,7 @@ class PendaftaranService
                 $existing->update([
                     'nim'          => $data['nim'],
                     'nama_lengkap' => $data['nama_lengkap'],
+                    'tempat_lahir' => $data['tempat_lahir'],
                     'bod'          => $data['bod'],
                     'prodi'        => $data['prodi'],
                     'no_telp'      => $data['no_telp'],
@@ -54,6 +55,7 @@ class PendaftaranService
                 'ujian_id'     => $ujian->id,
                 'nim'          => $data['nim'],
                 'nama_lengkap' => $data['nama_lengkap'],
+                'tempat_lahir' => $data['tempat_lahir'],
                 'bod'          => $data['bod'],
                 'prodi'        => $data['prodi'],
                 'no_telp'      => $data['no_telp'],

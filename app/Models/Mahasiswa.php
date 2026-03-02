@@ -19,6 +19,7 @@ class Mahasiswa extends Authenticatable
         'score_listening',   // Listening score
         'score_structure',   // Structure and Writing Expression score
         'score_reading',     // Reading score
+        'test_date',         // Tanggal ujian EPT
         'google_id',        // Google OAuth ID
         'avatar',           // URL foto profil Google
     ];

@@ -16,6 +16,7 @@ class Daftar extends Model
         'ujian_id',
         'nim',
         'nama_lengkap',
+        'tempat_lahir',
         'bod',
         'prodi',
         'no_telp',
