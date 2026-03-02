@@ -98,7 +98,7 @@
 
                 <div class="flex items-stretch mb-2">
                     <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Date of Issue</div>
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Test Date</div>
                     <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
                         style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
                     <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ now()->translatedFormat('d F Y') }}</div>
