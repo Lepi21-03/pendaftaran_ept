@@ -1,285 +1,214 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Sertifikat EPT - {{ $mahasiswa->name }}</title>
-    <style>
-        /* ============================================================
-         * CSS embedded sederhana — kompatibel dengan DomPDF & browser.
-         * Tidak menggunakan Tailwind, CDN, atau font eksternal.
-         * Format: A4 Portrait (210mm x 297mm)
-         * ============================================================ */
-        @page {
-            size: a4 portrait;
-            margin: 0;
-        }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+@extends('layouts.app')
 
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            background: #ffffff;
-            margin: 0;
-            padding: 0;
-        }
+@section('title', 'Official Certificate of Proficiency - EPT Portal')
 
-        /* Pembungkus halaman — A4 portrait */
-        .page {
-            width: 210mm;
-            height: 290mm; /* Dikurangi dari 297mm untuk toleransi DomPDF */
-            margin: 0 auto;
-            padding: 10mm;
-            background: #ffffff;
-            overflow: hidden;
-            page-break-inside: avoid;
-            page-break-after: avoid;
-        }
+@section('content')
+<style>
+    @media print {
+        .no-print { display: none !important; }
+        body { background: white !important; margin: 0; padding: 0; }
+        .certificate-container { scale: 1; transform-origin: top left; padding: 0 !important; box-shadow: none !important; }
+    }
+    .clip-arrow {
+        clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+    }
+</style>
 
-        /* Border luar biru */
-        .outer-border {
-            width: 100%;
-            height: 100%;
-            border: 5px solid #1a56c4;
-            padding: 5px;
-            box-sizing: border-box;
-        }
-
-        /* Border dalam biru tipis */
-        .inner-border {
-            width: 100%;
-            height: 100%;
-            border: 1.5px solid #1a56c4;
-            padding: 16px 22px;
-            position: relative;
-            box-sizing: border-box;
-        }
-
-        /* Sudut dekoratif */
-        .corner {
-            position: absolute;
-            width: 18px;
-            height: 18px;
-        }
-        .corner-tl { top: 7px; left: 7px;   border-top: 3px solid #1a56c4; border-left: 3px solid #1a56c4; }
-        .corner-tr { top: 7px; right: 7px;  border-top: 3px solid #1a56c4; border-right: 3px solid #1a56c4; }
-        .corner-bl { bottom: 7px; left: 7px;  border-bottom: 3px solid #1a56c4; border-left: 3px solid #1a56c4; }
-        .corner-br { bottom: 7px; right: 7px; border-bottom: 3px solid #1a56c4; border-right: 3px solid #1a56c4; }
-
-        /* ---- HEADER ---- */
-        .header {
-            text-align: center;
-            border-bottom: 1.5px solid #1a56c4;
-            padding-bottom: 12px;
-            margin-bottom: 16px;
-        }
-        .header-label {
-            font-size: 9px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #1a56c4;
-            margin-bottom: 4px;
-        }
-        .header-title {
-            font-size: 26px;
-            font-weight: bold;
-            color: #111827;
-        }
-        .header-subtitle {
-            font-size: 10px;
-            color: #6b7280;
-            font-style: italic;
-            margin-top: 4px;
-        }
-
-        /* ---- NAMA PENERIMA ---- */
-        .recipient-section {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .recipient-name {
-            font-size: 24px;
-            font-weight: bold;
-            color: #111827;
-            text-transform: uppercase;
-            border-bottom: 2px solid #1a56c4;
-            padding-bottom: 6px;
-            letter-spacing: 1px;
-        }
-        .recipient-nim {
-            font-size: 10px;
-            color: #6b7280;
-            font-weight: bold;
-            margin-top: 4px;
-            letter-spacing: 2px;
-        }
-        .recipient-desc {
-            font-size: 9.5px;
-            color: #4b5563;
-            margin-top: 10px;
-            line-height: 1.7;
-        }
-
-        /* ---- SKOR ---- */
-        .score-section {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-        .score-box {
-            display: inline-block;
-            border: 2px solid #1a56c4;
-            padding: 10px 32px;
-            border-radius: 6px;
-            background: #f8fafc;
-        }
-        .score-label {
-            font-size: 8px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: #9ca3af;
-            margin-bottom: 2px;
-        }
-        .score-value {
-            font-size: 38px;
-            font-weight: bold;
-            color: #1a56c4;
-        }
-
-        /* ---- DIVIDER ---- */
-        .divider {
-            border: none;
-            border-top: 1px solid #e5e7eb;
-            margin: 14px 0;
-        }
-
-        /* ---- FOOTER (tabel tanda tangan) ---- */
-        .footer-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .footer-table td {
-            vertical-align: top;
-            padding: 0 6px;
-        }
-        .info-label {
-            font-size: 7.5px;
-            font-weight: bold;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: #9ca3af;
-            margin-bottom: 2px;
-        }
-        .info-value {
-            font-size: 10px;
-            font-weight: bold;
-            color: #111827;
-            margin-bottom: 8px;
-        }
-        .cert-id {
-            font-size: 8px;
-            font-family: 'Courier New', monospace;
-            color: #9ca3af;
-        }
-        .verified-badge {
-            font-size: 9px;
-            font-weight: bold;
-            color: #1a56c4;
-            letter-spacing: 1px;
-            margin-top: 3px;
-        }
-        .signature-line {
-            width: 100px;
-            border-top: 1px solid #374151;
-            margin-top: 36px;
-            margin-bottom: 3px;
-        }
-        .signature-name {
-            font-size: 7.5px;
-            font-weight: bold;
-            text-transform: uppercase;
-            color: #6b7280;
-        }
-    </style>
-</head>
-<body>
-<div class="page">
-    <div class="outer-border">
-        <div class="inner-border">
-
-            <!-- Sudut dekoratif -->
-            <div class="corner corner-tl"></div>
-            <div class="corner corner-tr"></div>
-            <div class="corner corner-bl"></div>
-            <div class="corner corner-br"></div>
-
-            <!-- Header -->
-            <div class="header">
-                <div class="header-label">Otoritas Penilaian Global</div>
-                <div class="header-title">Certificate of Achievement</div>
-                <div class="header-subtitle">Dengan ini secara resmi menyatakan bahwa</div>
-            </div>
-
-            <!-- Nama Penerima -->
-            <div class="recipient-section">
-                <div class="recipient-name">{{ $mahasiswa->name ?? '-' }}</div>
-                <div class="recipient-nim">NIM: {{ $mahasiswa->nim ?? '-' }}</div>
-                <div class="recipient-desc">
-                    telah berhasil menunjukkan kemahiran bahasa Inggris tingkat lanjut melalui
-                    <strong>English Proficiency Test (EPT)</strong> yang diselenggarakan di bawah kondisi standar.
-                </div>
-            </div>
-
-            <!-- Skor -->
-            <div class="score-section">
-                <div class="score-box">
-                    <div class="score-label">Skor EPT</div>
-                    <div class="score-value">{{ $mahasiswa->score ?? '-' }}</div>
-                </div>
-            </div>
-
-            <hr class="divider">
-
-            <!-- Footer -->
-            <table class="footer-table">
-                <tr>
-                    <!-- Kiri: Info -->
-                    <td style="width: 35%; text-align: left;">
-                        <div class="info-label">Tanggal Terbit</div>
-                        <div class="info-value">{{ now()->translatedFormat('d F Y') }}</div>
-                        <div class="info-label">Program Studi</div>
-                        <div class="info-value">{{ $mahasiswa->prodi ?? '-' }}</div>
-                    </td>
-
-                    <!-- Tengah: ID Verifikasi -->
-                    <td style="width: 30%; text-align: center; vertical-align: middle;">
-                        <div class="cert-id">EPT-CERT-{{ $mahasiswa->nim ?? 'N/A' }}</div>
-                        <div class="verified-badge">&#10003; VERIFIED</div>
-                    </td>
-
-                    <!-- Kanan: Tanda tangan -->
-                    <td style="width: 35%; text-align: right;">
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr>
-                                <td style="text-align: center; padding: 0 4px;">
-                                    <div class="signature-line" style="margin-left: auto;"></div>
-                                    <div class="signature-name">Kepala Pusat Bahasa</div>
-                                </td>
-                                <td style="text-align: center; padding: 0 4px;">
-                                    <div class="signature-line" style="margin-left: auto;"></div>
-                                    <div class="signature-name">Koordinator EPT</div>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-
+<div class="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Action Bar (Hidden on Print) -->
+    <div class="no-print mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-black tracking-tight mb-2">Digital Certificate</h1>
+            <p class="text-slate-600 dark:text-slate-400">Official verified credential for your English Proficiency Test (EPT) result.</p>
+        </div>
+        <div class="flex gap-3">
+            <button class="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-primary/90 transition-all shadow-md" onclick="window.print()">
+                <span class="material-symbols-outlined text-[20px]">print</span>
+                Cetak Sertifikat
+            </button>
         </div>
     </div>
+
+    <!-- ═══ CERTIFICATE CARD ═══ -->
+    <div class="certificate-container w-full max-w-[900px] mx-auto bg-white rounded-lg overflow-hidden shadow-2xl flex flex-col mb-12">
+        
+        <!-- ═══ MAIN CONTENT ═══ -->
+        <div class="flex min-h-[380px]">
+
+            <!-- Left Panel - Teal Branding -->
+            <div class="w-64 min-w-[256px] flex flex-col items-center justify-center gap-5 px-5 py-8"
+                style="background: linear-gradient(160deg, #00bcd4 0%, #0097a7 100%)">
+
+                <!-- Logo Circle -->
+                <div class="w-32 h-32 rounded-full flex items-center justify-center border-4 border-yellow-500"
+                    style="background: #f5c518;">
+                    <div class="flex flex-col items-center gap-1">
+                        <span class="text-[6.5px] font-bold text-blue-900 text-center leading-tight">UNIVERSITAS NGUDI WALUYO</span>
+                        <!-- Globe SVG -->
+                        <svg width="58" height="58" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="40" cy="40" r="36" fill="#1a5fa8" stroke="#0d3d70" stroke-width="2"/>
+                            <ellipse cx="40" cy="40" rx="16" ry="36" fill="none" stroke="#7ec8e3" stroke-width="1.5"/>
+                            <ellipse cx="40" cy="40" rx="36" ry="10" fill="none" stroke="#7ec8e3" stroke-width="1.5"/>
+                            <ellipse cx="40" cy="40" rx="36" ry="22" fill="none" stroke="#7ec8e3" stroke-width="1.2"/>
+                            <line x1="40" y1="4" x2="40" y2="76" stroke="#7ec8e3" stroke-width="1.5"/>
+                            <line x1="4" y1="40" x2="76" y2="40" stroke="#7ec8e3" stroke-width="1.5"/>
+                            <rect x="22" y="57" width="36" height="6" rx="2" fill="#e8d44d" stroke="#b8a800" stroke-width="1"/>
+                            <rect x="24" y="55" width="14" height="8" rx="1" fill="#f5e97e"/>
+                            <rect x="42" y="55" width="14" height="8" rx="1" fill="#f5e97e"/>
+                        </svg>
+                        <span class="text-[7.5px] font-bold text-blue-900">★ UNW ★</span>
+                    </div>
+                </div>
+
+                <!-- University Name -->
+                <div class="text-center text-white">
+                    <div class="text-3xl font-black leading-none tracking-wide">NGUDI</div>
+                    <div class="text-3xl font-black leading-none tracking-wide">WALUYO</div>
+                    <div class="text-sm font-normal tracking-[3px] mt-1">UNIVERSITY</div>
+                </div>
+            </div>
+
+            <!-- Right Panel - Data Fields -->
+            <div class="flex-1 bg-gray-100 flex flex-col justify-center px-10 py-9 gap-0">
+
+                <!-- Info Fields -->
+                <div class="flex items-stretch mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Name</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
+                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->name ?? '-' }}</div>
+                </div>
+
+                <div class="flex items-stretch mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Registration Number</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
+                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->nim ?? '-' }}</div>
+                </div>
+
+                <div class="flex items-stretch mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Program Study</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
+                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->prodi ?? '-' }}</div>
+                </div>
+
+                <div class="flex items-stretch mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Date of Issue</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
+                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ now()->translatedFormat('d F Y') }}</div>
+                </div>
+
+                <!-- Score Fields -->
+                <div class="flex items-stretch mt-2 mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold bg-gray-400">
+                        Listening Comprehension</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm bg-gray-400">:</div>
+                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score_listening ?? '-' }}</div>
+                </div>
+
+                <div class="flex items-stretch mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold bg-gray-400">
+                        Structure and Writing Expression</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm bg-gray-400">:</div>
+                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score_structure ?? '-' }}</div>
+                </div>
+
+                <div class="flex items-stretch mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold bg-gray-400">
+                        Reading Comprehension</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm bg-gray-400">:</div>
+                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score_reading ?? '-' }}</div>
+                </div>
+
+                <div class="flex items-stretch mb-2">
+                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Total Score</div>
+                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
+                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
+                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score ?? '-' }}</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ═══ SIGNATURE AREA ═══ -->
+        <div class="flex items-center justify-between px-10 pb-5 pt-2 bg-gray-100">
+            <!-- Barcode - kiri mentok -->
+            <div class="flex flex-col items-start gap-1">
+                <svg height="50" viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="200" height="40" fill="white"/>
+                    <g fill="#111">
+                        <rect x="2"   y="2" width="3" height="36"/><rect x="7"   y="2" width="1" height="36"/>
+                        <rect x="10"  y="2" width="4" height="36"/><rect x="16"  y="2" width="1" height="36"/>
+                        <rect x="19"  y="2" width="2" height="36"/><rect x="23"  y="2" width="3" height="36"/>
+                        <rect x="28"  y="2" width="1" height="36"/><rect x="31"  y="2" width="4" height="36"/>
+                        <rect x="37"  y="2" width="2" height="36"/><rect x="41"  y="2" width="1" height="36"/>
+                        <rect x="44"  y="2" width="3" height="36"/><rect x="49"  y="2" width="2" height="36"/>
+                        <rect x="53"  y="2" width="1" height="36"/><rect x="56"  y="2" width="4" height="36"/>
+                        <rect x="62"  y="2" width="2" height="36"/><rect x="66"  y="2" width="1" height="36"/>
+                        <rect x="69"  y="2" width="3" height="36"/><rect x="74"  y="2" width="1" height="36"/>
+                        <rect x="77"  y="2" width="2" height="36"/><rect x="81"  y="2" width="4" height="36"/>
+                        <rect x="87"  y="2" width="1" height="36"/><rect x="90"  y="2" width="3" height="36"/>
+                        <rect x="95"  y="2" width="2" height="36"/><rect x="99"  y="2" width="1" height="36"/>
+                        <rect x="102" y="2" width="4" height="36"/><rect x="108" y="2" width="2" height="36"/>
+                        <rect x="112" y="2" width="1" height="36"/><rect x="115" y="2" width="3" height="36"/>
+                        <rect x="120" y="2" width="1" height="36"/><rect x="123" y="2" width="2" height="36"/>
+                        <rect x="127" y="2" width="4" height="36"/><rect x="133" y="2" width="1" height="36"/>
+                        <rect x="136" y="2" width="3" height="36"/><rect x="141" y="2" width="2" height="36"/>
+                        <rect x="145" y="2" width="1" height="36"/><rect x="148" y="2" width="4" height="36"/>
+                        <rect x="154" y="2" width="1" height="36"/><rect x="157" y="2" width="2" height="36"/>
+                        <rect x="161" y="2" width="3" height="36"/><rect x="166" y="2" width="1" height="36"/>
+                        <rect x="169" y="2" width="4" height="36"/><rect x="175" y="2" width="2" height="36"/>
+                        <rect x="179" y="2" width="1" height="36"/><rect x="182" y="2" width="3" height="36"/>
+                        <rect x="187" y="2" width="2" height="36"/><rect x="191" y="2" width="1" height="36"/>
+                        <rect x="194" y="2" width="4" height="36"/>
+                    </g>
+                </svg>
+                <span class="text-xs font-mono text-gray-500 tracking-widest">*{{ $mahasiswa->nim ?? '0000000' }}*</span>
+            </div>
+
+            <!-- Tanda tangan - kanan -->
+            <div class="text-center">
+                <p class="text-sm text-gray-500 mb-2">The head of language laboratory</p>
+                <div class="relative w-44 h-24 flex items-center justify-center">
+                    <!-- Stamp -->
+                    <div class="absolute left-2 top-1 w-[90px] h-[90px] rounded-full border-2 border-blue-700 opacity-60 flex items-center justify-center">
+                        <span class="text-[6.5px] font-bold text-blue-700 text-center leading-tight">UNIVERSITAS<br>NGUDI WALUYO<br>⭐ UNW ⭐</span>
+                    </div>
+                    <!-- Signature -->
+                    <svg width="176" height="70" viewBox="0 0 176 70" class="relative z-10">
+                        <path d="M 60 55 Q 70 20 85 35 Q 95 50 110 25 Q 120 15 135 40 Q 140 50 150 45"
+                            stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+                        <path d="M 65 60 Q 80 45 90 55 Q 100 65 115 50 Q 125 38 140 52"
+                            stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="border-b-2 border-gray-500 w-44 mx-auto mb-1"></div>
+                <p class="text-sm font-bold text-gray-800">Maya Kurnia Dewi, S.S., M.Hum</p>
+            </div>
+        </div>
+
+        <!-- ═══ BOTTOM BAR ═══ -->
+        <div class="flex items-center px-8 py-4"
+            style="background: linear-gradient(90deg, #00acc1, #006064)">
+            <div class="text-white font-extrabold text-base px-6 py-2.5 rounded shrink-0"
+                style="background: linear-gradient(90deg, #43a047, #1b5e20)">
+                English Proficiency Test Report
+            </div>
+        </div>
+
+        <!-- ═══ FOOTER ═══ -->
+        <div class="bg-gray-700 px-8 py-2.5 text-gray-300 text-xs italic">
+            *Sertifikat EPT hanya bisa digunakan di lingkungan internal Universitas Ngudi Waluyo
+        </div>
+
+    </div>
+
 </div>
-</body>
-</html>
+@endsection 
