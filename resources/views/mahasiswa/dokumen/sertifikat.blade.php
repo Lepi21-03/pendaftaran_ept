@@ -1,214 +1,307 @@
-@extends('layouts.app')
-
-@section('title', 'Official Certificate of Proficiency - EPT Portal')
-
-@section('content')
+{{-- Sertifikat View - Kompatibel Web & PDF --}}
 <style>
+    @page {
+        size: a4 portrait;
+        margin: 0;
+    }
+    body {
+        margin: 0;
+        padding: 0;
+    }
+    .certificate-wrapper {
+        width: 100%;
+        background-color: #f8fafc;
+        display: block;
+        position: relative;
+        font-family: 'Helvetica', 'Arial', sans-serif;
+        padding-bottom: 40px;
+    }
+    @media print {
+        .certificate-wrapper { 
+            height: 297mm; 
+            padding-bottom: 0;
+            background-color: white; 
+        }
+        .cert-card { box-shadow: none; top: 0; border: 1px solid #ddd; }
+        .no-print { display: none !important; }
+    }
+    .cert-card {
+        width: 900px; /* Base width from original design */
+        margin: 0 auto;
+        background: white;
+        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+        border-radius: 8px;
+        overflow: hidden;
+        position: relative;
+        top: 20mm; /* Center vertically-ish */
+    }
+    .cert-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-height: 380px;
+    }
+    .left-panel {
+        width: 256px;
+        background: linear-gradient(160deg, #00bcd4 0%, #0097a7 100%);
+        text-align: center;
+        vertical-align: middle;
+        padding: 32px 20px;
+    }
+    .right-panel {
+        background: #f3f4f6;
+        padding: 36px 40px;
+        vertical-align: middle;
+    }
+    .logo-circle {
+        width: 128px;
+        height: 128px;
+        background: #f5c518;
+        border: 4px solid #eab308;
+        border-radius: 50%;
+        margin: 0 auto 20px auto;
+        display: block;
+        padding-top: 15px;
+    }
+    .unw-text {
+        color: white;
+        text-align: center;
+    }
+    .unw-title {
+        font-size: 30px;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: 1px;
+    }
+    .unw-sub {
+        font-size: 14px;
+        letter-spacing: 3px;
+        margin-top: 4px;
+    }
+    
+    /* Info Row using Table for stability */
+    .info-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 8px;
+    }
+    .info-label {
+        width: 210px;
+        background: linear-gradient(90deg, #43a047, #66bb6a);
+        color: white;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 8px 16px;
+        position: relative;
+    }
+    /* Arrow effect for PDF (Clip path replacement) */
+    .info-label::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        border-top: 18px solid transparent;
+        border-bottom: 18px solid transparent;
+        border-left: 12px solid #66bb6a;
+        margin-right: -12px;
+        z-index: 10;
+    }
+    .info-separator {
+        width: 10px;
+        background: #66bb6a;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        padding: 8px 0;
+    }
+    .info-value {
+        background: #e5e7eb;
+        color: #1f2937;
+        font-weight: bold;
+        font-size: 14px;
+        padding: 8px 16px;
+    }
+    
+    .score-label {
+        background: #9ca3af;
+    }
+    .score-label::after {
+        border-left-color: #9ca3af;
+    }
+    
+    /* Footer & Signature */
+    .footer-table {
+        width: 100%;
+        background: #f3f4f6;
+        padding: 0 40px 20px 40px;
+    }
+    .barcode-area {
+        vertical-align: bottom;
+        padding-bottom: 10px;
+    }
+    .signature-area {
+        text-align: center;
+        width: 200px;
+    }
+    
+    .bottom-bar {
+        background: linear-gradient(90deg, #00acc1, #006064);
+        padding: 16px 32px;
+    }
+    .report-tag {
+        background: linear-gradient(90deg, #43a047, #1b5e20);
+        color: white;
+        font-weight: 800;
+        font-size: 16px;
+        padding: 10px 24px;
+        display: inline-block;
+        border-radius: 4px;
+    }
+    .legal-footer {
+        background: #374151;
+        color: #d1d5db;
+        font-size: 12px;
+        font-style: italic;
+        padding: 10px 32px;
+    }
+    
     @media print {
         .no-print { display: none !important; }
-        body { background: white !important; margin: 0; padding: 0; }
-        .certificate-container { scale: 1; transform-origin: top left; padding: 0 !important; box-shadow: none !important; }
-    }
-    .clip-arrow {
-        clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 50%, calc(100% - 12px) 100%, 0 100%);
+        .cert-card { box-shadow: none; top: 0; border: 1px solid #ddd; }
+        .certificate-wrapper { background: white; }
     }
 </style>
 
-<div class="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+<div class="certificate-wrapper">
     <!-- Action Bar (Hidden on Print) -->
-    <div class="no-print mb-8 flex flex-col md:flex-row md:items-end justify-between gap-4">
+    <div class="no-print" style="max-width: 900px; margin: 0 auto; padding: 20px 0; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
-            <h1 class="text-3xl font-black tracking-tight mb-2">Digital Certificate</h1>
-            <p class="text-slate-600 dark:text-slate-400">Official verified credential for your English Proficiency Test (EPT) result.</p>
-        </div>
-        <div class="flex gap-3">
-            <button class="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-lg text-sm font-bold hover:bg-primary/90 transition-all shadow-md" onclick="window.print()">
-                <span class="material-symbols-outlined text-[20px]">print</span>
-                Cetak Sertifikat
-            </button>
+            <h1 style="font-size: 24px; font-weight: 900; margin: 0;">Digital Certificate</h1>
+            <p style="color: #64748b; margin: 5px 0 0 0; font-size: 14px;">Official verified credential for your EPT result.</p>
         </div>
     </div>
 
-    <!-- ═══ CERTIFICATE CARD ═══ -->
-    <div class="certificate-container w-full max-w-[900px] mx-auto bg-white rounded-lg overflow-hidden shadow-2xl flex flex-col mb-12">
-        
-        <!-- ═══ MAIN CONTENT ═══ -->
-        <div class="flex min-h-[380px]">
-
-            <!-- Left Panel - Teal Branding -->
-            <div class="w-64 min-w-[256px] flex flex-col items-center justify-center gap-5 px-5 py-8"
-                style="background: linear-gradient(160deg, #00bcd4 0%, #0097a7 100%)">
-
-                <!-- Logo Circle -->
-                <div class="w-32 h-32 rounded-full flex items-center justify-center border-4 border-yellow-500"
-                    style="background: #f5c518;">
-                    <div class="flex flex-col items-center gap-1">
-                        <span class="text-[6.5px] font-bold text-blue-900 text-center leading-tight">UNIVERSITAS NGUDI WALUYO</span>
-                        <!-- Globe SVG -->
-                        <svg width="58" height="58" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="40" cy="40" r="36" fill="#1a5fa8" stroke="#0d3d70" stroke-width="2"/>
+    <div class="cert-card">
+        <table class="cert-table">
+            <tr>
+                <td class="left-panel">
+                    <div class="logo-circle">
+                        <div style="font-size: 6.5px; font-weight: bold; color: #0d324d; margin-bottom: 5px;">UNIVERSITAS NGUDI WALUYO</div>
+                        <svg width="50" height="50" viewBox="0 0 80 80" style="margin: 0 auto;">
+                            <circle cx="40" cy="40" r="36" fill="#1a5fa8" />
                             <ellipse cx="40" cy="40" rx="16" ry="36" fill="none" stroke="#7ec8e3" stroke-width="1.5"/>
                             <ellipse cx="40" cy="40" rx="36" ry="10" fill="none" stroke="#7ec8e3" stroke-width="1.5"/>
-                            <ellipse cx="40" cy="40" rx="36" ry="22" fill="none" stroke="#7ec8e3" stroke-width="1.2"/>
                             <line x1="40" y1="4" x2="40" y2="76" stroke="#7ec8e3" stroke-width="1.5"/>
                             <line x1="4" y1="40" x2="76" y2="40" stroke="#7ec8e3" stroke-width="1.5"/>
-                            <rect x="22" y="57" width="36" height="6" rx="2" fill="#e8d44d" stroke="#b8a800" stroke-width="1"/>
-                            <rect x="24" y="55" width="14" height="8" rx="1" fill="#f5e97e"/>
-                            <rect x="42" y="55" width="14" height="8" rx="1" fill="#f5e97e"/>
+                            <rect x="22" y="57" width="36" height="6" rx="2" fill="#e8d44d" />
                         </svg>
-                        <span class="text-[7.5px] font-bold text-blue-900">★ UNW ★</span>
+                        <div style="font-size: 7.5px; font-weight: bold; color: #0d324d; margin-top: 5px;">★ UNW ★</div>
                     </div>
-                </div>
-
-                <!-- University Name -->
-                <div class="text-center text-white">
-                    <div class="text-3xl font-black leading-none tracking-wide">NGUDI</div>
-                    <div class="text-3xl font-black leading-none tracking-wide">WALUYO</div>
-                    <div class="text-sm font-normal tracking-[3px] mt-1">UNIVERSITY</div>
-                </div>
-            </div>
-
-            <!-- Right Panel - Data Fields -->
-            <div class="flex-1 bg-gray-100 flex flex-col justify-center px-10 py-9 gap-0">
-
-                <!-- Info Fields -->
-                <div class="flex items-stretch mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Name</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
-                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->name ?? '-' }}</div>
-                </div>
-
-                <div class="flex items-stretch mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Registration Number</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
-                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->nim ?? '-' }}</div>
-                </div>
-
-                <div class="flex items-stretch mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Program Study</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
-                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->prodi ?? '-' }}</div>
-                </div>
-
-                <div class="flex items-stretch mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Date of Issue</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
-                    <div class="flex-1 flex items-center px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ now()->translatedFormat('d F Y') }}</div>
-                </div>
-
-                <!-- Score Fields -->
-                <div class="flex items-stretch mt-2 mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold bg-gray-400">
-                        Listening Comprehension</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm bg-gray-400">:</div>
-                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score_listening ?? '-' }}</div>
-                </div>
-
-                <div class="flex items-stretch mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold bg-gray-400">
-                        Structure and Writing Expression</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm bg-gray-400">:</div>
-                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score_structure ?? '-' }}</div>
-                </div>
-
-                <div class="flex items-stretch mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold bg-gray-400">
-                        Reading Comprehension</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm bg-gray-400">:</div>
-                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score_reading ?? '-' }}</div>
-                </div>
-
-                <div class="flex items-stretch mb-2">
-                    <div class="clip-arrow flex items-center px-4 pr-7 min-w-[210px] py-2 text-white text-sm font-semibold"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">Total Score</div>
-                    <div class="flex items-center px-1.5 py-2 text-white font-bold text-sm"
-                        style="background: linear-gradient(90deg, #43a047, #66bb6a)">:</div>
-                    <div class="flex-1 flex items-center justify-end px-4 py-2 bg-gray-200 text-gray-800 font-bold text-sm">{{ $mahasiswa->score ?? '-' }}</div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ═══ SIGNATURE AREA ═══ -->
-        <div class="flex items-center justify-between px-10 pb-5 pt-2 bg-gray-100">
-            <!-- Barcode - kiri mentok -->
-            <div class="flex flex-col items-start gap-1">
-                <svg height="50" viewBox="0 0 200 40" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="200" height="40" fill="white"/>
-                    <g fill="#111">
-                        <rect x="2"   y="2" width="3" height="36"/><rect x="7"   y="2" width="1" height="36"/>
-                        <rect x="10"  y="2" width="4" height="36"/><rect x="16"  y="2" width="1" height="36"/>
-                        <rect x="19"  y="2" width="2" height="36"/><rect x="23"  y="2" width="3" height="36"/>
-                        <rect x="28"  y="2" width="1" height="36"/><rect x="31"  y="2" width="4" height="36"/>
-                        <rect x="37"  y="2" width="2" height="36"/><rect x="41"  y="2" width="1" height="36"/>
-                        <rect x="44"  y="2" width="3" height="36"/><rect x="49"  y="2" width="2" height="36"/>
-                        <rect x="53"  y="2" width="1" height="36"/><rect x="56"  y="2" width="4" height="36"/>
-                        <rect x="62"  y="2" width="2" height="36"/><rect x="66"  y="2" width="1" height="36"/>
-                        <rect x="69"  y="2" width="3" height="36"/><rect x="74"  y="2" width="1" height="36"/>
-                        <rect x="77"  y="2" width="2" height="36"/><rect x="81"  y="2" width="4" height="36"/>
-                        <rect x="87"  y="2" width="1" height="36"/><rect x="90"  y="2" width="3" height="36"/>
-                        <rect x="95"  y="2" width="2" height="36"/><rect x="99"  y="2" width="1" height="36"/>
-                        <rect x="102" y="2" width="4" height="36"/><rect x="108" y="2" width="2" height="36"/>
-                        <rect x="112" y="2" width="1" height="36"/><rect x="115" y="2" width="3" height="36"/>
-                        <rect x="120" y="2" width="1" height="36"/><rect x="123" y="2" width="2" height="36"/>
-                        <rect x="127" y="2" width="4" height="36"/><rect x="133" y="2" width="1" height="36"/>
-                        <rect x="136" y="2" width="3" height="36"/><rect x="141" y="2" width="2" height="36"/>
-                        <rect x="145" y="2" width="1" height="36"/><rect x="148" y="2" width="4" height="36"/>
-                        <rect x="154" y="2" width="1" height="36"/><rect x="157" y="2" width="2" height="36"/>
-                        <rect x="161" y="2" width="3" height="36"/><rect x="166" y="2" width="1" height="36"/>
-                        <rect x="169" y="2" width="4" height="36"/><rect x="175" y="2" width="2" height="36"/>
-                        <rect x="179" y="2" width="1" height="36"/><rect x="182" y="2" width="3" height="36"/>
-                        <rect x="187" y="2" width="2" height="36"/><rect x="191" y="2" width="1" height="36"/>
-                        <rect x="194" y="2" width="4" height="36"/>
-                    </g>
-                </svg>
-                <span class="text-xs font-mono text-gray-500 tracking-widest">*{{ $mahasiswa->nim ?? '0000000' }}*</span>
-            </div>
-
-            <!-- Tanda tangan - kanan -->
-            <div class="text-center">
-                <p class="text-sm text-gray-500 mb-2">The head of language laboratory</p>
-                <div class="relative w-44 h-24 flex items-center justify-center">
-                    <!-- Stamp -->
-                    <div class="absolute left-2 top-1 w-[90px] h-[90px] rounded-full border-2 border-blue-700 opacity-60 flex items-center justify-center">
-                        <span class="text-[6.5px] font-bold text-blue-700 text-center leading-tight">UNIVERSITAS<br>NGUDI WALUYO<br>⭐ UNW ⭐</span>
+                    <div class="unw-text">
+                        <div class="unw-title">NGUDI</div>
+                        <div class="unw-title">WALUYO</div>
+                        <div class="unw-sub">UNIVERSITY</div>
                     </div>
-                    <!-- Signature -->
-                    <svg width="176" height="70" viewBox="0 0 176 70" class="relative z-10">
-                        <path d="M 60 55 Q 70 20 85 35 Q 95 50 110 25 Q 120 15 135 40 Q 140 50 150 45"
-                            stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
-                        <path d="M 65 60 Q 80 45 90 55 Q 100 65 115 50 Q 125 38 140 52"
-                            stroke="#333" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-                    </svg>
-                </div>
-                <div class="border-b-2 border-gray-500 w-44 mx-auto mb-1"></div>
-                <p class="text-sm font-bold text-gray-800">Maya Kurnia Dewi, S.S., M.Hum</p>
-            </div>
-        </div>
+                </td>
+                <td class="right-panel">
+                    <!-- Info Sections -->
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">Name</td>
+                            <td class="info-separator">:</td>
+                            <td class="info-value">{{ $mahasiswa->name ?? '-' }}</td>
+                        </tr>
+                    </table>
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">Registration Number</td>
+                            <td class="info-separator">:</td>
+                            <td class="info-value">{{ $mahasiswa->nim ?? '-' }}</td>
+                        </tr>
+                    </table>
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">Program Study</td>
+                            <td class="info-separator">:</td>
+                            <td class="info-value">{{ $mahasiswa->prodi ?? '-' }}</td>
+                        </tr>
+                    </table>
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">Date of Issue</td>
+                            <td class="info-separator">:</td>
+                            <td class="info-value">{{ now()->translatedFormat('d F Y') }}</td>
+                        </tr>
+                    </table>
 
-        <!-- ═══ BOTTOM BAR ═══ -->
-        <div class="flex items-center px-8 py-4"
-            style="background: linear-gradient(90deg, #00acc1, #006064)">
-            <div class="text-white font-extrabold text-base px-6 py-2.5 rounded shrink-0"
-                style="background: linear-gradient(90deg, #43a047, #1b5e20)">
+                    <div style="height: 10px;"></div>
+
+                    <!-- Scores -->
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label score-label">Listening Comprehension</td>
+                            <td class="info-separator" style="background: #9ca3af;">:</td>
+                            <td class="info-value" style="text-align: right;">{{ $mahasiswa->score_listening ?? '-' }}</td>
+                        </tr>
+                    </table>
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label score-label">Structure & Writing</td>
+                            <td class="info-separator" style="background: #9ca3af;">:</td>
+                            <td class="info-value" style="text-align: right;">{{ $mahasiswa->score_structure ?? '-' }}</td>
+                        </tr>
+                    </table>
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label score-label">Reading Comprehension</td>
+                            <td class="info-separator" style="background: #9ca3af;">:</td>
+                            <td class="info-value" style="text-align: right;">{{ $mahasiswa->score_reading ?? '-' }}</td>
+                        </tr>
+                    </table>
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">Total Score</td>
+                            <td class="info-separator">:</td>
+                            <td class="info-value" style="text-align: right; background: #d1fae5;">{{ $mahasiswa->score ?? '-' }}</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <!-- Signature & Barcode Section -->
+        <table class="footer-table">
+            <tr>
+                <td class="barcode-area">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents('https://bwipjs-api.metafloor.com/?bcid=code128&text=' . ($mahasiswa->nim ?? '000000') . '&scale=1&rotate=N&includetext=true')) }}" width="150" alt="barcode">
+                </td>
+                <td class="signature-area">
+                    <p style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">The head of language laboratory</p>
+                    <div style="position: relative; height: 80px;">
+                        <!-- Mock Stamp -->
+                        <div style="position: absolute; left: 20px; top: 0; width: 70px; height: 70px; border: 2px solid rgba(29, 78, 216, 0.4); border-radius: 50%; font-size: 6px; color: rgba(29, 78, 216, 0.6); padding-top: 15px; font-weight: bold;">
+                            UNIVERSITAS<br>NGUDI WALUYO
+                        </div>
+                        <!-- Mock Signature Path -->
+                        <svg width="120" height="60" style="position: relative; z-index: 2;">
+                            <path d="M 20 40 Q 30 10 45 25 Q 55 40 70 15 Q 80 5 95 30" stroke="#333" stroke-width="2" fill="none" />
+                        </svg>
+                    </div>
+                    <div style="border-bottom: 1.5px solid #6b7280; width: 100%; margin: 5px 0;"></div>
+                    <p style="font-size: 12px; font-weight: bold; margin: 0;">Maya Kurnia Dewi, S.S., M.Hum</p>
+                </td>
+            </tr>
+        </table>
+
+        <div class="bottom-bar">
+            <div class="report-tag">
                 English Proficiency Test Report
             </div>
         </div>
 
-        <!-- ═══ FOOTER ═══ -->
-        <div class="bg-gray-700 px-8 py-2.5 text-gray-300 text-xs italic">
+        <div class="legal-footer">
             *Sertifikat EPT hanya bisa digunakan di lingkungan internal Universitas Ngudi Waluyo
         </div>
-
     </div>
-
 </div>
-@endsection 

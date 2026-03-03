@@ -262,10 +262,9 @@ class MahasiswaController extends Controller
                 ->with('error', 'Kartu ujian belum tersedia. Pastikan pembayaran sudah diverifikasi.');
         }
 
-        // Generate PDF dari view kartu-ujian.blade.php yang sudah ada
-        // View ini sudah menggunakan inline CSS, cocok untuk DomPDF
-        // Variabel yang dipakai di view adalah $record
-        $pdf = Pdf::loadView('mahasiswa.dokumen.kartu-ujian', ['record' => $pendaftaran])
+        // Generate PDF dari view kartu-ujian-pdf.blade.php yang dikhususkan untuk PDF
+        // View ini menggunakan ukuran mm dan @page untuk akurasi layout A4 portrait
+        $pdf = Pdf::loadView('mahasiswa.dokumen.kartu-ujian-pdf', ['record' => $pendaftaran])
             ->setPaper('a4', 'portrait');
 
         // Nama file menggunakan Nama Mahasiswa agar lebih personal
@@ -299,9 +298,9 @@ class MahasiswaController extends Controller
                 ->with('error', 'Sertifikat belum tersedia. Tunggu Admin menginput skor EPT Anda.');
         }
 
-        // Generate PDF dari view sertifikat.blade.php (sudah menggunakan inline CSS, kompatibel DomPDF)
-        $pdf = Pdf::loadView('mahasiswa.dokumen.sertifikat', ['mahasiswa' => $mahasiswa])
-            ->setPaper('a4', 'portrait');
+        // Generate PDF dari view sertifikat-pdf.blade.php (A4 Landscape)
+        $pdf = Pdf::loadView('mahasiswa.dokumen.sertifikat-pdf', ['mahasiswa' => $mahasiswa])
+            ->setPaper('a4', 'landscape');
 
         // Nama file menggunakan Nama Mahasiswa
         $namaClean = str_replace([' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $mahasiswa->name);
