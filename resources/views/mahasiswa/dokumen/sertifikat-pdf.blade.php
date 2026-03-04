@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <title>Sertifikat EPT - {{ $mahasiswa->name }}</title>
     <style>
-        /* Optimasi khusus DomPDF A4 Landscape */
         @page {
             size: 297mm 210mm;
             margin: 0;
@@ -15,68 +15,62 @@
             background-color: white;
             width: 297mm;
             height: 210mm;
+            line-height: 1.2;
         }
-        .certificate-container {
+        .container {
             width: 297mm;
             height: 210mm;
             position: relative;
-            overflow: hidden;
-            box-sizing: border-box;
         }
-        
-        .main-table {
+        /* Main Layout Table */
+        .wrapper-table {
             width: 100%;
-            height: 185mm; /* Leave space for bottom bar */
+            height: 210mm;
             border-collapse: collapse;
+            table-layout: fixed;
         }
-        
         .left-panel {
-            width: 75mm;
-            background-color: #00bcd4; /* DomPDF linear gradient support varies, use solid or simple */
-            color: white;
+            width: 80mm;
+            background-color: #00bcd4;
+            vertical-align: middle;
             text-align: center;
-            vertical-align: middle;
-            padding: 20mm 10mm;
+            color: white;
+            padding: 0 10mm;
         }
-        
         .right-panel {
+            width: 217mm;
             background-color: #f3f4f6;
-            padding: 15mm 20mm;
-            vertical-align: middle;
+            vertical-align: top;
+            padding: 15mm 15mm 0 15mm;
+            position: relative;
         }
         
-        .logo-circle {
-            width: 35mm;
-            height: 35mm;
-            background-color: #f5c518;
-            border: 2mm solid #eab308;
-            border-radius: 50%;
-            margin: 0 auto 10mm auto;
-            padding-top: 5mm;
-            box-sizing: border-box;
+        /* Logo & Brand */
+        .logo-container {
+            margin-bottom: 8mm;
+            text-align: center;
         }
-        
         .unw-title {
-            font-size: 28pt;
+            font-size: 32pt;
             font-weight: bold;
-            line-height: 1;
             margin: 0;
+            line-height: 1;
         }
-        
         .unw-sub {
-            font-size: 12pt;
+            font-size: 14pt;
             letter-spacing: 2mm;
             margin-top: 2mm;
+            text-transform: uppercase;
         }
         
-        /* Info Sections */
+        /* Info Rows */
         .info-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 3mm;
+            margin-bottom: 4mm;
         }
         .info-label {
-            width: 55mm;
+            width: 60mm;
             background-color: #43a047;
             color: white;
             font-size: 11pt;
@@ -97,49 +91,61 @@
             font-size: 11pt;
             padding: 3mm 5mm;
         }
-        
-        .score-label {
-            background-color: #9ca3af;
-        }
-        .score-separator {
+        .score-label, .score-separator {
             background-color: #9ca3af;
         }
         
-        /* Footer & Signature */
-        .footer-table {
-            width: 100%;
-            background-color: #f3f4f6;
-            padding: 0 20mm 10mm 20mm;
-        }
-        .barcode-area {
-            vertical-align: bottom;
-            width: 50%;
-        }
-        .signature-area {
+        /* Footer Elements */
+        .signature-section {
+            position: absolute;
+            bottom: 35mm;
+            right: 15mm;
+            width: 80mm;
             text-align: center;
-            width: 50%;
+        }
+        .signature-title {
+            font-size: 10pt;
+            color: #4b5563;
+            margin-bottom: 15mm;
+        }
+        .signature-name {
+            font-size: 12pt;
+            font-weight: bold;
+            border-top: 1px solid #4b5563;
+            padding-top: 2mm;
+            display: inline-block;
+            width: 100%;
         }
         
-        .bottom-bar {
+        .barcode-section {
+            position: absolute;
+            bottom: 35mm;
+            left: 15mm;
+        }
+        .credential-id {
+            font-size: 8pt;
+            color: #6b7280;
+        }
+        
+        .bottom-accent {
             position: absolute;
             bottom: 0;
+            left: 0;
             width: 100%;
             height: 25mm;
             background-color: #00acc1;
-            padding: 5mm 20mm;
-            box-sizing: border-box;
         }
-        
-        .report-tag {
+        .report-label {
             background-color: #43a047;
             color: white;
             font-weight: bold;
-            font-size: 14pt;
-            padding: 3mm 10mm;
+            font-size: 16pt;
+            padding: 4mm 10mm;
+            margin-left: 15mm;
+            margin-top: 5mm;
             display: inline-block;
         }
-        
-        .legal-footer {
+        .legal-notice {
             position: absolute;
             bottom: 3mm;
             right: 10mm;
@@ -150,20 +156,16 @@
     </style>
 </head>
 <body>
-    <div class="certificate-container">
-        <table class="main-table">
+    <div class="container">
+        <table class="wrapper-table">
             <tr>
                 <td class="left-panel">
-                    <div class="logo-circle">
-                        <!-- Simplified Logo for PDF -->
-                        <div style="font-size: 6pt; font-weight: bold; color: #0d324d; margin-bottom: 2mm;">UNIVERSITAS NGUDI WALUYO</div>
-                        <div style="font-size: 20pt; color: #1a5fa8; font-weight: bold;">UNW</div>
+                    <div class="logo-container">
+                        <img src="{{ public_path('img/logo-unw.png') }}" alt="Logo UNW" style="width: 45mm; height: auto;">
                     </div>
-                    <div class="unw-text">
-                        <div class="unw-title">NGUDI</div>
-                        <div class="unw-title">WALUYO</div>
-                        <div class="unw-sub">UNIVERSITY</div>
-                    </div>
+                    <div class="unw-title">NGUDI</div>
+                    <div class="unw-title">WALUYO</div>
+                    <div class="unw-sub">University</div>
                 </td>
                 <td class="right-panel">
                     <table class="info-table">
@@ -195,9 +197,8 @@
                         </tr>
                     </table>
 
-                    <div style="height: 5mm;"></div>
+                    <div style="height: 10mm;"></div>
 
-                    <!-- Scores -->
                     <table class="info-table">
                         <tr>
                             <td class="info-label score-label">Listening Comprehension</td>
@@ -226,38 +227,28 @@
                             <td class="info-value" style="text-align: right; background-color: #d1fae5;">{{ $mahasiswa->score ?? '-' }}</td>
                         </tr>
                     </table>
-                </td>
-            </tr>
-        </table>
 
-        <!-- Signature Area -->
-        <table style="width: 100%; margin-top: -30mm; padding: 0 20mm;">
-            <tr>
-                <td width="50%">
-                    <!-- Barcode placeholder or image -->
-                    <div style="font-size: 8pt; color: #666;">Verified Credential ID: EPT-{{ $mahasiswa->nim }}</div>
-                </td>
-                <td width="50%" style="text-align: center;">
-                    <p style="font-size: 10pt; color: #6b7280; margin-bottom: 2mm;">The head of language laboratory</p>
-                    <div style="height: 20mm; position: relative;">
-                        <!-- Mock Signature -->
-                        <div style="font-family: cursive; font-size: 18pt; color: #333; padding-top: 5mm;">Maya Kurnia Dewi</div>
+                    <!-- Floating Barcode & Signature inside Right Panel's scope -->
+                    <div class="barcode-section">
+                        <div class="credential-id">Verified Credential ID: EPT-{{ $mahasiswa->nim }}</div>
                     </div>
-                    <div style="border-bottom: 1px solid #6b7280; width: 60mm; margin: 2mm auto;"></div>
-                    <p style="font-size: 11pt; font-weight: bold; margin: 0;">Maya Kurnia Dewi, S.S., M.Hum</p>
+
+                    <div class="signature-section">
+                        <div class="signature-title">The head of language laboratory</div>
+                        <div class="signature-name">Maya Kurnia Dewi, S.S., M.Hum</div>
+                    </div>
                 </td>
             </tr>
         </table>
 
-        <div class="bottom-bar">
-            <div class="report-tag">
-                English Proficiency Test Report
-            </div>
+        <!-- Bottom Bar (Fixed to Container) -->
+        <div class="bottom-accent">
+            <div class="report-label">English Proficiency Test Report</div>
         </div>
-
-        <div class="legal-footer">
+        <div class="legal-notice">
             *Sertifikat EPT hanya bisa digunakan di lingkungan internal Universitas Ngudi Waluyo
         </div>
     </div>
 </body>
 </html>
+
