@@ -54,13 +54,9 @@
     }
     .logo-circle {
         width: 128px;
-        height: 128px;
-        background: #f5c518;
-        border: 4px solid #eab308;
-        border-radius: 50%;
         margin: 0 auto 20px auto;
         display: block;
-        padding-top: 15px;
+        background: transparent;
     }
     .unw-text {
         color: white;
@@ -187,16 +183,7 @@
             <tr>
                 <td class="left-panel">
                     <div class="logo-circle">
-                        <div style="font-size: 6.5px; font-weight: bold; color: #0d324d; margin-bottom: 5px;">UNIVERSITAS NGUDI WALUYO</div>
-                        <svg width="50" height="50" viewBox="0 0 80 80" style="margin: 0 auto;">
-                            <circle cx="40" cy="40" r="36" fill="#1a5fa8" />
-                            <ellipse cx="40" cy="40" rx="16" ry="36" fill="none" stroke="#7ec8e3" stroke-width="1.5"/>
-                            <ellipse cx="40" cy="40" rx="36" ry="10" fill="none" stroke="#7ec8e3" stroke-width="1.5"/>
-                            <line x1="40" y1="4" x2="40" y2="76" stroke="#7ec8e3" stroke-width="1.5"/>
-                            <line x1="4" y1="40" x2="76" y2="40" stroke="#7ec8e3" stroke-width="1.5"/>
-                            <rect x="22" y="57" width="36" height="6" rx="2" fill="#e8d44d" />
-                        </svg>
-                        <div style="font-size: 7.5px; font-weight: bold; color: #0d324d; margin-top: 5px;">★ UNW ★</div>
+                        <img src="{{ asset('img/logo-unw.png') }}" alt="Logo UNW" style="width: 120px; height: auto; margin: 0 auto; display: block;">
                     </div>
                     <div class="unw-text">
                         <div class="unw-title">NGUDI</div>
