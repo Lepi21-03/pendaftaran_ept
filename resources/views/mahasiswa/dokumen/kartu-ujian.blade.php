@@ -16,7 +16,7 @@
         width: 100%;
         display: block;
         background-color: #f1f5f9;
-        padding: 40px 0;
+        padding: 20px 0;
     }
     @media print {
         .full-page-wrapper { 
@@ -27,43 +27,48 @@
         }
     }
     .card-container {
-        width: 180mm;
+        width: 90mm;
+        height: 55mm;
         margin: 0 auto;
-        border: 4px double #000;
+        border: 2px solid #000;
         background: white;
-        padding: 1.5cm;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        padding: 5mm;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         position: relative;
-        min-height: 120mm;
+        overflow: hidden;
+        box-sizing: border-box;
     }
     .header-table {
         width: 100%;
-        border-bottom: 3px solid #000;
-        margin-bottom: 25px;
-        padding-bottom: 15px;
+        border-bottom: 1.5px solid #000;
+        margin-bottom: 8px;
+        padding-bottom: 5px;
     }
     .unw-logo-small {
-        width: 60px;
-        height: 60px;
-        background: #f5c518;
-        border-radius: 50%;
+        width: 35px;
+        height: 35px;
         text-align: center;
-        padding-top: 8px;
+    }
+
+    .unw-logo-small img {
+        width: 100%;
+        height: auto;
+        margin-top: -10px;
     }
     .header-text {
         text-align: center;
     }
     .title {
-        font-size: 24px;
+        font-size: 11px;
         font-weight: 900;
         text-transform: uppercase;
         margin: 0;
-        letter-spacing: 2px;
+        letter-spacing: 0.5px;
     }
     .subtitle {
-        font-size: 16px;
+        font-size: 8px;
         color: #475569;
-        margin-top: 5px;
+        margin-top: 1px;
     }
     
     .main-table {
@@ -75,50 +80,40 @@
         padding-top: 10px;
     }
     .label-cell {
-        width: 140px;
+        width: 80px;
         font-weight: bold;
-        font-size: 14px;
-        padding: 10px 0;
+        font-size: 9px;
+        padding: 2px 0;
         color: #1e293b;
     }
     .value-cell {
-        font-size: 14px;
-        padding: 10px 0;
+        font-size: 9px;
+        padding: 2px 0;
         color: #000;
         font-weight: bold;
     }
-    
-    .photo-area {
-        width: 3cm;
-        height: 4cm;
-        border: 2px solid #94a3b8;
-        background: #f8fafc;
-        text-align: center;
-        vertical-align: middle;
-        font-size: 12px;
-        color: #64748b;
-    }
+
     
     .footer-table {
         width: 100%;
         margin-top: 40px;
     }
     .notes-box {
-        font-size: 11px;
+        font-size: 7px;
         font-style: italic;
         color: #475569;
-        border-left: 3px solid #00bcd4;
-        padding-left: 10px;
+        border-left: 2px solid #00bcd4;
+        padding-left: 5px;
     }
     .sig-box {
         text-align: right;
-        font-size: 14px;
+        font-size: 9px;
     }
     .sig-line {
         border-bottom: 1px solid #000;
-        width: 180px;
+        width: 100px;
         display: inline-block;
-        margin-top: 50px;
+        margin-top: 15px;
     }
     
     .watermark {
@@ -126,7 +121,7 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) rotate(-30deg);
-        font-size: 80px;
+        font-size: 30px;
         font-weight: 900;
         color: rgba(0, 188, 212, 0.05);
         z-index: 0;
@@ -136,7 +131,7 @@
     
     @media print {
         .full-page-wrapper { background: white; padding-top: 0; }
-        .card-container { box-shadow: none; border-width: 2px; margin-top: 20mm; }
+        .card-container { box-shadow: none; border-width: 1px; margin: 0; }
     }
 </style>
 
@@ -146,19 +141,16 @@
         
         <table class="header-table">
             <tr>
-                <td width="70">
+                <td width="40">
                     <div class="unw-logo-small">
-                        <svg width="40" height="40" viewBox="0 0 80 80">
-                            <circle cx="40" cy="40" r="36" fill="#1a5fa8" />
-                            <rect x="22" y="57" width="36" height="6" rx="2" fill="#e8d44d" />
-                        </svg>
+                        <img src="{{ asset('img/logo-unw.png') }}" alt="Logo UNW">
                     </div>
                 </td>
                 <td class="header-text">
                     <div class="title">KARTU PESERTA UJIAN</div>
                     <div class="subtitle">English Proficiency Test (EPT) - UNW</div>
                 </td>
-                <td width="70" style="text-align: right; font-size: 10px; font-weight: bold;">
+                <td width="50" style="text-align: right; font-size: 7px; font-weight: bold;">
                     ID: EPT-{{ $record->id }}
                 </td>
             </tr>
@@ -195,11 +187,6 @@
                         </tr>
                     </table>
                 </td>
-                <td width="3cm" style="vertical-align: top; padding-top: 10px;">
-                    <div class="photo-area">
-                        PAS FOTO<br>3 x 4
-                    </div>
-                </td>
             </tr>
         </table>
 
@@ -208,8 +195,7 @@
                 <td class="notes-box">
                     <strong>PENTING:</strong><br>
                     * Harap membawa kartu ini saat ujian.<br>
-                    * Datang 15 menit sebelum ujian dimulai.<br>
-                    * Membawa alat tulis (Pensil 2B & Penghapus).
+                    * Datang 15 menit sebelum ujian dimulai.
                 </td>
                 <td class="sig-box">
                     Ungaran, {{ now()->translatedFormat('d F Y') }}<br>

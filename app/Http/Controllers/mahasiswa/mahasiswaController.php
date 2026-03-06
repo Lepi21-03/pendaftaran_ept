@@ -298,9 +298,9 @@ class MahasiswaController extends Controller
                 ->with('error', 'Sertifikat belum tersedia. Tunggu Admin menginput skor EPT Anda.');
         }
 
-        // Generate PDF dari view sertifikat-pdf.blade.php (A4 Landscape)
+        // Generate PDF dari view sertifikat-pdf.blade.php (A6 Portrait)
         $pdf = Pdf::loadView('mahasiswa.dokumen.sertifikat-pdf', ['mahasiswa' => $mahasiswa])
-            ->setPaper('a4', 'landscape');
+            ->setPaper('a6', 'portrait');
 
         // Nama file menggunakan Nama Mahasiswa
         $namaClean = str_replace([' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $mahasiswa->name);

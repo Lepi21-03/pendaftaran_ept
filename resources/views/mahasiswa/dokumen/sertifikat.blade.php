@@ -1,7 +1,7 @@
 {{-- Sertifikat View - Kompatibel Web & PDF --}}
 <style>
     @page {
-        size: a4 portrait;
+        size: a4 landscape;
         margin: 0;
     }
     body {
@@ -18,7 +18,7 @@
     }
     @media print {
         .certificate-wrapper { 
-            height: 297mm; 
+            height: 210mm; 
             padding-bottom: 0;
             background-color: white; 
         }
@@ -26,14 +26,19 @@
         .no-print { display: none !important; }
     }
     .cert-card {
-        width: 900px; /* Base width from original design */
+        width: 800px; /* Kembali ke lebar landscape yang lebih proporsional di layar */
         margin: 0 auto;
         background: white;
-        box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-        border-radius: 8px;
+        box-shadow: 0 15px 30px -5px rgb(0 0 0 / 0.15);
+        border-radius: 6px;
         overflow: hidden;
         position: relative;
-        top: 20mm; /* Center vertically-ish */
+        top: 10mm;
+    }
+    .cert-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-height: 450px; /* Pastikan ada tinggi minimal agar terlihat landscape */
     }
     .cert-table {
         width: 100%;
@@ -41,20 +46,20 @@
         min-height: 380px;
     }
     .left-panel {
-        width: 256px;
+        width: 220px;
         background: linear-gradient(160deg, #00bcd4 0%, #0097a7 100%);
         text-align: center;
         vertical-align: middle;
-        padding: 32px 20px;
+        padding: 20px 12px;
     }
     .right-panel {
         background: #f3f4f6;
-        padding: 36px 40px;
+        padding: 20px 25px;
         vertical-align: middle;
     }
     .logo-circle {
-        width: 128px;
-        margin: 0 auto 20px auto;
+        width: 70px;
+        margin: 0 auto 15px auto;
         display: block;
         background: transparent;
     }
@@ -63,15 +68,15 @@
         text-align: center;
     }
     .unw-title {
-        font-size: 30px;
+        font-size: 18px;
         font-weight: 900;
         line-height: 1;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
     }
     .unw-sub {
-        font-size: 14px;
-        letter-spacing: 3px;
-        margin-top: 4px;
+        font-size: 9px;
+        letter-spacing: 1.5px;
+        margin-top: 2px;
     }
     
     /* Info Row using Table for stability */
@@ -81,12 +86,12 @@
         margin-bottom: 8px;
     }
     .info-label {
-        width: 210px;
+        width: 140px;
         background: linear-gradient(90deg, #43a047, #66bb6a);
         color: white;
-        font-size: 14px;
+        font-size: 10px;
         font-weight: 600;
-        padding: 8px 16px;
+        padding: 5px 10px;
         position: relative;
     }
     /* Arrow effect for PDF (Clip path replacement) */
@@ -97,26 +102,26 @@
         top: 0;
         width: 0;
         height: 0;
-        border-top: 18px solid transparent;
-        border-bottom: 18px solid transparent;
-        border-left: 12px solid #66bb6a;
-        margin-right: -12px;
+        border-top: 13px solid transparent;
+        border-bottom: 13px solid transparent;
+        border-left: 8px solid #66bb6a;
+        margin-right: -8px;
         z-index: 10;
     }
     .info-separator {
-        width: 10px;
+        width: 8px;
         background: #66bb6a;
         color: white;
         font-weight: bold;
         text-align: center;
-        padding: 8px 0;
+        padding: 5px 0;
     }
     .info-value {
         background: #e5e7eb;
         color: #1f2937;
         font-weight: bold;
-        font-size: 14px;
-        padding: 8px 16px;
+        font-size: 10px;
+        padding: 5px 10px;
     }
     
     .score-label {
@@ -130,7 +135,7 @@
     .footer-table {
         width: 100%;
         background: #f3f4f6;
-        padding: 0 40px 20px 40px;
+        padding: 0 25px 15px 25px;
     }
     .barcode-area {
         vertical-align: bottom;
@@ -138,21 +143,21 @@
     }
     .signature-area {
         text-align: center;
-        width: 200px;
+        width: 150px;
     }
     
     .bottom-bar {
         background: linear-gradient(90deg, #00acc1, #006064);
-        padding: 16px 32px;
+        padding: 10px 20px;
     }
     .report-tag {
         background: linear-gradient(90deg, #43a047, #1b5e20);
         color: white;
         font-weight: 800;
-        font-size: 16px;
-        padding: 10px 24px;
+        font-size: 11px;
+        padding: 6px 15px;
         display: inline-block;
-        border-radius: 4px;
+        border-radius: 3px;
     }
     .legal-footer {
         background: #374151;
@@ -171,10 +176,10 @@
 
 <div class="certificate-wrapper">
     <!-- Action Bar (Hidden on Print) -->
-    <div class="no-print" style="max-width: 900px; margin: 0 auto; padding: 20px 0; display: flex; justify-content: space-between; align-items: flex-end;">
+    <div class="no-print" style="max-width: 800px; margin: 0 auto; padding: 15px 0; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
-            <h1 style="font-size: 24px; font-weight: 900; margin: 0;">Digital Certificate</h1>
-            <p style="color: #64748b; margin: 5px 0 0 0; font-size: 14px;">Official verified credential for your EPT result.</p>
+            <h1 style="font-size: 18px; font-weight: 900; margin: 0;">Digital Certificate</h1>
+            <p style="color: #64748b; margin: 3px 0 0 0; font-size: 12px;">Official verified credential for your EPT result.</p>
         </div>
     </div>
 
@@ -183,7 +188,7 @@
             <tr>
                 <td class="left-panel">
                     <div class="logo-circle">
-                        <img src="{{ asset('img/logo-unw.png') }}" alt="Logo UNW" style="width: 120px; height: auto; margin: 0 auto; display: block;">
+                        <img src="{{ asset('img/logo-unw.png') }}" alt="Logo UNW" style="width: 60px; height: auto; margin: 0 auto; display: block;">
                     </div>
                     <div class="unw-text">
                         <div class="unw-title">NGUDI</div>
@@ -261,22 +266,22 @@
         <table class="footer-table">
             <tr>
                 <td class="barcode-area">
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents('https://bwipjs-api.metafloor.com/?bcid=code128&text=' . ($mahasiswa->nim ?? '000000') . '&scale=1&rotate=N&includetext=true')) }}" width="150" alt="barcode">
+                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents('https://bwipjs-api.metafloor.com/?bcid=code128&text=' . ($mahasiswa->nim ?? '000000') . '&scale=1&rotate=N&includetext=true')) }}" width="100" alt="barcode">
                 </td>
                 <td class="signature-area">
-                    <p style="font-size: 11px; color: #6b7280; margin-bottom: 5px;">The head of language laboratory</p>
+                    <p style="font-size: 9px; color: #6b7280; margin-bottom: 3px;">The head of language laboratory</p>
                     <div style="position: relative; height: 80px;">
                         <!-- Mock Stamp -->
-                        <div style="position: absolute; left: 20px; top: 0; width: 70px; height: 70px; border: 2px solid rgba(29, 78, 216, 0.4); border-radius: 50%; font-size: 6px; color: rgba(29, 78, 216, 0.6); padding-top: 15px; font-weight: bold;">
+                        <div style="position: absolute; left: 15px; top: 0; width: 50px; height: 50px; border: 1.5px solid rgba(29, 78, 216, 0.4); border-radius: 50%; font-size: 4px; color: rgba(29, 78, 216, 0.6); padding-top: 10px; font-weight: bold;">
                             UNIVERSITAS<br>NGUDI WALUYO
                         </div>
                         <!-- Mock Signature Path -->
-                        <svg width="120" height="60" style="position: relative; z-index: 2;">
-                            <path d="M 20 40 Q 30 10 45 25 Q 55 40 70 15 Q 80 5 95 30" stroke="#333" stroke-width="2" fill="none" />
+                        <svg width="80" height="40" style="position: relative; z-index: 2;">
+                            <path d="M 10 30 Q 20 5 35 15 Q 45 30 60 10 Q 70 2 85 20" stroke="#333" stroke-width="1.5" fill="none" />
                         </svg>
                     </div>
                     <div style="border-bottom: 1.5px solid #6b7280; width: 100%; margin: 5px 0;"></div>
-                    <p style="font-size: 12px; font-weight: bold; margin: 0;">Maya Kurnia Dewi, S.S., M.Hum</p>
+                    <p style="font-size: 10px; font-weight: bold; margin: 0;">Maya Kurnia Dewi, S.S., M.Hum</p>
                 </td>
             </tr>
         </table>
