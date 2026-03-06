@@ -5,7 +5,7 @@
     <title>Sertifikat EPT - {{ $mahasiswa->name }}</title>
     <style>
         @page {
-            size: 297mm 210mm;
+            size: 148mm 105mm;
             margin: 0;
         }
         body {
@@ -13,35 +13,35 @@
             padding: 0;
             font-family: 'Helvetica', 'Arial', sans-serif;
             background-color: white;
-            width: 297mm;
-            height: 210mm;
-            line-height: 1.2;
+            width: 148mm;
+            height: 105mm;
+            line-height: 1.1;
         }
         .container {
-            width: 297mm;
-            height: 210mm;
+            width: 148mm;
+            height: 105mm;
             position: relative;
         }
         /* Main Layout Table */
         .wrapper-table {
             width: 100%;
-            height: 210mm;
+            height: 105mm;
             border-collapse: collapse;
             table-layout: fixed;
         }
         .left-panel {
-            width: 60mm;
-            background-color: #0097a7; /* Menggunakan warna gelap dari gradien web */
+            width: 35mm;
+            background-color: #0097a7;
             vertical-align: middle;
             text-align: center;
             color: white;
             padding: 0 10mm;
         }
         .right-panel {
-            width: 237mm;
+            width: 113mm;
             background-color: #f3f4f6;
             vertical-align: top;
-            padding: 15mm 15mm 0 15mm;
+            padding: 8mm 10mm 0 10mm;
             position: relative;
         }
         
@@ -51,15 +51,15 @@
             text-align: center;
         }
         .unw-title {
-            font-size: 30pt; /* Sesuaikan dengan 30px web */
+            font-size: 15pt;
             font-weight: bold;
             margin: 0;
             line-height: 1;
         }
         .unw-sub {
-            font-size: 11pt; /* Sesuaikan dengan 14px web */
-            letter-spacing: 2mm;
-            margin-top: 2mm;
+            font-size: 7pt;
+            letter-spacing: 1mm;
+            margin-top: 1mm;
             text-transform: uppercase;
         }
         
@@ -70,15 +70,15 @@
             margin-bottom: 2mm;
         }
         .info-label {
-            width: 50mm;
+            width: 30mm;
             background-color: #43a047;
             color: white;
-            font-size: 10.5pt; /* Sesuaikan dengan 14px web */
+            font-size: 7.5pt;
             font-weight: bold;
-            padding: 2.5mm 4mm;
+            padding: 1.5mm 3mm;
         }
         .info-separator {
-            width: 5mm;
+            width: 3mm;
             background-color: #43a047;
             color: white;
             font-weight: bold;
@@ -88,8 +88,8 @@
             background-color: #e5e7eb;
             color: #1f2937;
             font-weight: bold;
-            font-size: 10.5pt;
-            padding: 2.5mm 4mm;
+            font-size: 7.5pt;
+            padding: 1.5mm 3mm;
         }
         .score-label, .score-separator {
             background-color: #9ca3af;
@@ -98,15 +98,15 @@
         /* Footer Elements */
         .signature-section {
             position: absolute;
-            bottom: 35mm;
-            right: 15mm;
-            width: 80mm;
+            bottom: 20mm;
+            right: 10mm;
+            width: 50mm;
             text-align: center;
         }
         .signature-title {
-            font-size: 9pt; /* Sesuaikan dengan 11px web */
+            font-size: 7pt;
             color: #6b7280;
-            margin-bottom: 2mm;
+            margin-bottom: 1.5mm;
         }
         .signature-container {
             position: relative;
@@ -117,15 +117,15 @@
         /* Stamp for PDF - Matching web's 70px */
         .stamp {
             position: absolute;
-            left: 2mm;
-            top: -2mm;
-            width: 18.5mm;
-            height: 18.5mm;
-            border: 0.5mm solid rgba(29, 78, 216, 0.4);
+            left: 1mm;
+            top: -1mm;
+            width: 12mm;
+            height: 12mm;
+            border: 0.3mm solid rgba(29, 78, 216, 0.4);
             border-radius: 50%;
-            font-size: 4.5pt; /* Sesuaikan dengan 6px web */
+            font-size: 3pt;
             color: rgba(29, 78, 216, 0.6);
-            padding-top: 4mm;
+            padding-top: 2.5mm;
             font-weight: bold;
             text-align: center;
             line-height: 1.1;
@@ -139,10 +139,10 @@
         }
 
         .signature-name {
-            font-size: 10.5pt; /* Sesuaikan dengan 12px web */
+            font-size: 7.5pt;
             font-weight: bold;
-            border-top: 1.2px solid #6b7280;
-            padding-top: 1mm;
+            border-top: 0.8pt solid #6b7280;
+            padding-top: 0.5mm;
             display: inline-block;
             width: 100%;
             color: #000;
@@ -150,8 +150,8 @@
         
         .barcode-section {
             position: absolute;
-            bottom: 35mm;
-            left: -145mm;
+            bottom: 20mm;
+            left: -80mm;
         }
         .credential-id {
             font-size: 8pt;
@@ -164,17 +164,17 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 25mm;
-            background-color: #006064; /* Menggunakan warna gelap dari gradien web */
+            height: 15mm;
+            background-color: #006064;
         }
         .report-label {
-            background-color: #1b5e20; /* Menggunakan warna gelap dari gradien web */
+            background-color: #1b5e20;
             color: white;
             font-weight: bold;
-            font-size: 14pt; /* Sesuaikan dengan 16px web */
-            padding: 3.5mm 8mm;
-            margin-left: 15mm;
-            margin-top: 6mm;
+            font-size: 9pt;
+            padding: 2mm 5mm;
+            margin-left: 10mm;
+            margin-top: 4mm;
             display: inline-block;
         }
         .legal-notice {
@@ -193,7 +193,7 @@
             <tr>
                 <td class="left-panel">
                     <div class="logo-container">
-                        <img src="{{ public_path('img/logo-unw.png') }}" alt="Logo UNW" style="width: 40mm; height: auto;">
+                        <img src="{{ public_path('img/logo-unw.png') }}" alt="Logo UNW" style="width: 20mm; height: auto;">
                     </div>
                     <div class="unw-title">NGUDI</div>
                     <div class="unw-title">WALUYO</div>
@@ -229,7 +229,7 @@
                         </tr>
                     </table>
 
-                    <div style="height: 10mm;"></div>
+                    <div style="height: 5mm;"></div>
 
                     <table class="info-table">
                         <tr>
@@ -271,7 +271,7 @@
                             }
                         @endphp
                         @if($barcodeData)
-                            <img src="data:image/png;base64,{{ $barcodeData }}" width="120" alt="barcode">
+                            <img src="data:image/png;base64,{{ $barcodeData }}" width="80" alt="barcode">
                         @endif
                         <div class="credential-id">Verified Credential ID: EPT-{{ $mahasiswa->nim }}</div>
                     </div>
@@ -284,8 +284,8 @@
                                 UNIVERSITAS<br>NGUDI WALUYO
                             </div>
                             <!-- Mock Signature SVG - Precisely matching web path -->
-                            <svg width="100" height="50" class="signature-svg">
-                                <path d="M 20 40 Q 30 10 45 25 Q 55 40 70 15 Q 80 5 95 30" stroke="#333" stroke-width="1.8" fill="none" />
+                            <svg width="70" height="35" class="signature-svg">
+                                <path d="M 10 30 Q 20 5 35 15 Q 45 30 60 10 Q 70 2 85 20" stroke="#333" stroke-width="1.5" fill="none" />
                             </svg>
                         </div>
                         <div class="signature-name">Maya Kurnia Dewi, S.S., M.Hum</div>
