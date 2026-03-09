@@ -1,307 +1,352 @@
+
 <!DOCTYPE html>
 <html>
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Sertifikat EPT - {{ $mahasiswa->name }}</title>
-    <style>
-        @page {
-            size: 148mm 105mm;
-            margin: 0;
-        }
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Helvetica', 'Arial', sans-serif;
-            background-color: white;
-            width: 148mm;
-            height: 105mm;
-            line-height: 1.1;
-        }
-        .container {
-            width: 148mm;
-            height: 105mm;
-            position: relative;
-        }
-        /* Main Layout Table */
-        .wrapper-table {
-            width: 100%;
-            height: 105mm;
-            border-collapse: collapse;
-            table-layout: fixed;
-        }
-        .left-panel {
-            width: 35mm;
-            background-color: #0097a7;
-            vertical-align: middle;
-            text-align: center;
-            color: white;
-            padding: 0 10mm;
-        }
-        .right-panel {
-            width: 113mm;
-            background-color: #f3f4f6;
-            vertical-align: top;
-            padding: 8mm 10mm 0 10mm;
-            position: relative;
-        }
-        
-        /* Logo & Brand */
-        .logo-container {
-            margin-bottom: 8mm;
-            text-align: center;
-        }
-        .unw-title {
-            font-size: 15pt;
-            font-weight: bold;
-            margin: 0;
-            line-height: 1;
-        }
-        .unw-sub {
-            font-size: 7pt;
-            letter-spacing: 1mm;
-            margin-top: 1mm;
-            text-transform: uppercase;
-        }
-        
-        /* Info Rows */
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 2mm;
-        }
-        .info-label {
-            width: 30mm;
-            background-color: #43a047;
-            color: white;
-            font-size: 7.5pt;
-            font-weight: bold;
-            padding: 1.5mm 3mm;
-        }
-        .info-separator {
-            width: 3mm;
-            background-color: #43a047;
-            color: white;
-            font-weight: bold;
-            text-align: center;
-        }
-        .info-value {
-            background-color: #e5e7eb;
-            color: #1f2937;
-            font-weight: bold;
-            font-size: 7.5pt;
-            padding: 1.5mm 3mm;
-        }
-        .score-label, .score-separator {
-            background-color: #9ca3af;
-        }
-        
-        /* Footer Elements */
-        .signature-section {
-            position: absolute;
-            bottom: 20mm;
-            right: 10mm;
-            width: 50mm;
-            text-align: center;
-        }
-        .signature-title {
-            font-size: 7pt;
-            color: #6b7280;
-            margin-bottom: 1.5mm;
-        }
-        .signature-container {
-            position: relative;
-            height: 20mm;
-            width: 40mm;
-            margin: 0 auto;
-        }
-        /* Stamp for PDF - Matching web's 70px */
-        .stamp {
-            position: absolute;
-            left: 1mm;
-            top: -1mm;
-            width: 12mm;
-            height: 12mm;
-            border: 0.3mm solid rgba(29, 78, 216, 0.4);
-            border-radius: 50%;
-            font-size: 3pt;
-            color: rgba(29, 78, 216, 0.6);
-            padding-top: 2.5mm;
-            font-weight: bold;
-            text-align: center;
-            line-height: 1.1;
-        }
-        /* Signature SVG for PDF - Matching web precisely */
-        .signature-svg {
-            position: absolute;
-            left: 5mm;
-            top: 0;
-            z-index: 10;
+<meta http-equiv="Content-Type" content="text/html; charset="utf-8"/>
+<title>Sertifikat EPT - {{ $mahasiswa->name }}</title>
+
+<style>
+
+        @page{
+            size:A6 landscape;
+            margin:0;
         }
 
-        .signature-name {
-            font-size: 7.5pt;
-            font-weight: bold;
-            border-top: 0.8pt solid #6b7280;
-            padding-top: 0.5mm;
-            display: inline-block;
-            width: 100%;
-            color: #000;
+        body{
+            margin:0;
+            padding:0;
+            width:148mm;
+            height:105mm;
+            font-family:Helvetica, Arial, sans-serif;
+            overflow:hidden;
         }
-        
-        .barcode-section {
-            position: absolute;
-            bottom: 20mm;
-            left: -80mm;
+
+        .container{
+            width:148mm;
+            height:105mm;
+            position:relative;
+            overflow:hidden;
         }
-        .credential-id {
-            font-size: 8pt;
-            color: #6b7280;
-            margin-top: 2mm;
+
+        .wrapper{
+        width:100%;
+        height:92mm;
+        border-collapse:collapse;
+        table-layout:fixed;
+        }   
+
+        .left{
+            width:32mm;
+            background:#0097a7;
+            text-align:center;
+            color:white;
+            vertical-align:middle;
         }
-        
-        .bottom-accent {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 15mm;
-            background-color: #006064;
+
+        .logo{
+            width:18mm;
+            margin-bottom:3mm;
         }
-        .report-label {
-            background-color: #1b5e20;
-            color: white;
-            font-weight: bold;
-            font-size: 9pt;
-            padding: 2mm 5mm;
-            margin-left: 10mm;
-            margin-top: 4mm;
-            display: inline-block;
+
+        .unw-title{
+            font-size:14pt;
+            font-weight:bold;
+            line-height:1;
         }
-        .legal-notice {
-            position: absolute;
-            bottom: 3mm;
-            right: 10mm;
-            color: #d1d5db;
-            font-size: 9pt;
-            font-style: italic;
+
+        .unw-sub{
+            font-size:5pt;
+            letter-spacing:0.8mm;
         }
-    </style>
+
+        .right{
+            background:#f3f4f6;
+            padding:4mm;
+            vertical-align:top;
+        }
+
+        .info{
+            width:100%;
+            border-collapse:collapse;
+            margin-bottom:1mm;
+        }
+
+        .label{
+            width:30mm;
+            background:#43a047;
+            color:white;
+            font-size:6.5pt;
+            font-weight:bold;
+            padding:1.2mm;
+        }
+
+        .sep{
+            width:3mm;
+            background:#43a047;
+            color:white;
+            text-align:center;
+            font-size:6.5pt;
+        }
+
+        .val{
+            background:#e5e7eb;
+            font-size:6.5pt;
+            font-weight:bold;
+            padding:1.2mm;
+        }
+
+        .scorelabel,
+        .scoresep{
+            background:#9ca3af;
+        }
+
+        .footer{
+            width:100%;
+            margin-top:2mm;
+        }
+
+        .barcode{
+            width:50%;
+            text-align:center;
+        }
+
+        .sign{
+            text-align:center;
+            width:50%;
+        }
+
+        .sig-title{
+            font-size:6pt;
+            color:#6b7280;
+            margin-bottom:1mm;
+        }
+
+        .sig-area{
+            height:16mm;
+            position:relative;
+        }
+
+        .stamp{
+            position:absolute;
+            left:10mm;
+            top:1mm;
+            width:15mm;
+            height:15mm;
+            border:1px solid rgba(29,78,216,0.4);
+            border-radius:50%;
+            font-size:4pt;
+            text-align:center;
+            padding-top:3.5mm;
+            color:rgba(29,78,216,0.6);
+            font-weight:bold;
+        }
+
+        .sig-name{
+            font-size:8pt;
+            font-weight:bold;
+            border-top:1px solid #555;
+            margin-top:1.5mm;
+            padding-top:0.5mm;
+        }
+
+        .bottom{
+            position:absolute;
+            bottom:0;
+            left:0;
+            width:100%;
+            height:10mm;
+            background:#006064;
+        }
+
+        .report{
+            background:#1b5e20;
+            color:white;
+            font-size:8pt;
+            font-weight:bold;
+            padding:1.5mm 6mm;
+            display:inline-block;
+            margin-left:8mm;
+            margin-top:2mm;
+        }
+
+        .legal{
+            position:absolute;
+            right:8mm;
+            bottom:3mm;
+            font-size:5pt;
+            color:#d1d5db;
+            font-style:italic;
+        }
+
+</style>
 </head>
+
 <body>
-    <div class="container">
-        <table class="wrapper-table">
-            <tr>
-                <td class="left-panel">
-                    <div class="logo-container">
-                        <img src="{{ public_path('img/logo-unw.png') }}" alt="Logo UNW" style="width: 20mm; height: auto;">
-                    </div>
-                    <div class="unw-title">NGUDI</div>
-                    <div class="unw-title">WALUYO</div>
-                    <div class="unw-sub">UNIVERSITY</div>
-                </td>
-                <td class="right-panel">
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label">Name</td>
-                            <td class="info-separator">:</td>
-                            <td class="info-value">{{ $mahasiswa->name ?? '-' }}</td>
-                        </tr>
-                    </table>
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label">Registration Number</td>
-                            <td class="info-separator">:</td>
-                            <td class="info-value">{{ $mahasiswa->nim ?? '-' }}</td>
-                        </tr>
-                    </table>
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label">Program Study</td>
-                            <td class="info-separator">:</td>
-                            <td class="info-value">{{ $mahasiswa->prodi ?? '-' }}</td>
-                        </tr>
-                    </table>
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label">Date of Issue</td>
-                            <td class="info-separator">:</td>
-                            <td class="info-value">{{ now()->translatedFormat('d F Y') }}</td>
-                        </tr>
-                    </table>
 
-                    <div style="height: 5mm;"></div>
+<div class="container">
 
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label score-label">Listening Comprehension</td>
-                            <td class="info-separator score-separator">:</td>
-                            <td class="info-value" style="text-align: right;">{{ $mahasiswa->score_listening ?? '-' }}</td>
-                        </tr>
-                    </table>
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label score-label">Structure & Writing</td>
-                            <td class="info-separator score-separator">:</td>
-                            <td class="info-value" style="text-align: right;">{{ $mahasiswa->score_structure ?? '-' }}</td>
-                        </tr>
-                    </table>
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label score-label">Reading Comprehension</td>
-                            <td class="info-separator score-separator">:</td>
-                            <td class="info-value" style="text-align: right;">{{ $mahasiswa->score_reading ?? '-' }}</td>
-                        </tr>
-                    </table>
-                    <table class="info-table">
-                        <tr>
-                            <td class="info-label">Total Score</td>
-                            <td class="info-separator">:</td>
-                            <td class="info-value" style="text-align: right; background-color: #d1fae5;">{{ $mahasiswa->score ?? '-' }}</td>
-                        </tr>
-                    </table>
+<table class="wrapper">
 
-                    <!-- Floating Barcode & Signature inside Right Panel's scope -->
-                    <div class="barcode-section">
-                        @php
-                            $barcodeUrl = 'https://bwipjs-api.metafloor.com/?bcid=code128&text=' . ($mahasiswa->nim ?? '000000') . '&scale=1&rotate=N&includetext=true';
-                            try {
-                                $barcodeData = base64_encode(file_get_contents($barcodeUrl));
-                            } catch (\Exception $e) {
-                                $barcodeData = '';
-                            }
-                        @endphp
-                        @if($barcodeData)
-                            <img src="data:image/png;base64,{{ $barcodeData }}" width="80" alt="barcode">
-                        @endif
-                        <div class="credential-id">Verified Credential ID: EPT-{{ $mahasiswa->nim }}</div>
-                    </div>
+<tr>
 
-                    <div class="signature-section">
-                        <div class="signature-title">The head of language laboratory</div>
-                        <div class="signature-container">
-                            <!-- Mock Stamp -->
-                            <div class="stamp">
-                                UNIVERSITAS<br>NGUDI WALUYO
-                            </div>
-                            <!-- Mock Signature SVG - Precisely matching web path -->
-                            <svg width="70" height="35" class="signature-svg">
-                                <path d="M 10 30 Q 20 5 35 15 Q 45 30 60 10 Q 70 2 85 20" stroke="#333" stroke-width="1.5" fill="none" />
-                            </svg>
-                        </div>
-                        <div class="signature-name">Maya Kurnia Dewi, S.S., M.Hum</div>
-                    </div>
-                </td>
-            </tr>
-        </table>
+<td class="left">
 
-        <!-- Bottom Bar (Fixed to Container) -->
-        <div class="bottom-accent">
-            <div class="report-label">English Proficiency Test Report</div>
-        </div>
-        <div class="legal-notice">
-            *Sertifikat EPT hanya bisa digunakan di lingkungan internal Universitas Ngudi Waluyo
-        </div>
-    </div>
+<img src="{{ public_path('img/logo-unw.png') }}" class="logo">
+
+<div class="unw-title">NGUDI</div>
+<div class="unw-title">WALUYO</div>
+<div class="unw-sub">UNIVERSITY</div>
+
+</td>
+
+<td class="right">
+
+<table class="info">
+<tr>
+<td class="label">Name</td>
+<td class="sep">:</td>
+<td class="val">{{ $mahasiswa->name ?? '-' }}</td>
+</tr>
+</table>
+
+<table class="info">
+<tr>
+<td class="label">Registration Number</td>
+<td class="sep">:</td>
+<td class="val">{{ $mahasiswa->nim ?? '-' }}</td>
+</tr>
+</table>
+
+<table class="info">
+<tr>
+<td class="label">Program Study</td>
+<td class="sep">:</td>
+<td class="val">{{ $mahasiswa->prodi ?? '-' }}</td>
+</tr>
+</table>
+
+<table class="info">
+<tr>
+<td class="label">Date of Issue</td>
+<td class="sep">:</td>
+<td class="val">{{ now()->translatedFormat('d F Y') }}</td>
+</tr>
+</table>
+
+<div style="height:1mm"></div>
+
+<table class="info">
+<tr>
+<td class="label scorelabel">Listening Comprehension</td>
+<td class="sep scoresep">:</td>
+<td class="val" style="text-align:center">{{ $mahasiswa->score_listening ?? '-' }}</td>
+</tr>
+</table>
+
+<table class="info">
+<tr>
+<td class="label scorelabel">Structure & Writing</td>
+<td class="sep scoresep">:</td>
+<td class="val" style="text-align:center">{{ $mahasiswa->score_structure ?? '-' }}</td>
+</tr>
+</table>
+
+<table class="info">
+<tr>
+<td class="label scorelabel">Reading Comprehension</td>
+<td class="sep scoresep">:</td>
+<td class="val" style="text-align:center">{{ $mahasiswa->score_reading ?? '-' }}</td>
+</tr>
+</table>
+
+<table class="info">
+<tr>
+<td class="label">Total Score</td>
+<td class="sep">:</td>
+<td class="val" style="text-align:center;background:#d1fae5">
+{{ $mahasiswa->score ?? '-' }}
+</td>
+</tr>
+</table>
+
+</td>
+</tr>
+
+<tr>
+<td colspan="2" style="padding: 0 5mm;">
+
+<table class="footer">
+
+<tr>
+
+<td class="barcode">
+
+@php
+$barcodeUrl='https://bwipjs-api.metafloor.com/?bcid=code128&text='.($mahasiswa->nim ?? '000000').'&scale=2&rotate=N&includetext=true';
+try{
+$barcodeData=base64_encode(file_get_contents($barcodeUrl));
+}catch(Exception $e){
+$barcodeData='';
+}
+@endphp
+
+@if($barcodeData)
+<img src="data:image/png;base64,{{ $barcodeData }}" width="110">
+@endif
+
+<div style="font-size:6pt;color:#6b7280;margin-top:1mm">
+Verified Credential ID: EPT-{{ $mahasiswa->nim }}
+</div>
+
+</td>
+
+<td class="sign">
+
+<div class="sig-title">
+The head of language laboratory
+</div>
+
+<div class="sig-area">
+
+<div class="stamp">
+UNIVERSITAS<br>NGUDI WALUYO
+</div>
+
+<svg width="80" height="30" style="position:absolute;left:13mm;top:0">
+<path d="M 5 20 Q 15 5 25 10 Q 35 25 50 8 Q 60 2 70 15"
+stroke="#333" stroke-width="1.5" fill="none"/>
+</svg>
+
+</div>
+
+<div class="sig-name">
+Maya Kurnia Dewi, S.S., M.Hum
+</div>
+
+</td>
+
+</tr>
+
+</table>
+
+</td>
+
+</tr>
+
+</table>
+
+<div class="bottom">
+<div class="report">
+English Proficiency Test Report
+</div>
+</div>
+
+<div class="legal">
+*Sertifikat EPT hanya bisa digunakan di lingkungan internal Universitas Ngudi Waluyo
+</div>
+
+</div>
+
 </body>
 </html>
 
