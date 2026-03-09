@@ -29,14 +29,14 @@
         }
 
         .wrapper{
-        width:100%;
-        height:92mm;
-        border-collapse:collapse;
-        table-layout:fixed;
+            width:100%;
+            height:90mm;
+            border-collapse:collapse;
+            table-layout:fixed;
         }   
 
         .left{
-            width:32mm;
+            width:42mm;
             background:#0097a7;
             text-align:center;
             color:white;
@@ -106,8 +106,9 @@
         }
 
         .barcode{
-            width:50%;
+            width:45%;
             text-align:center;
+            padding-top: 2mm;
         }
 
         .sign{
@@ -142,11 +143,13 @@
         }
 
         .sig-name{
-            font-size:8pt;
+            font-size:7.5pt;
             font-weight:bold;
             border-top:1px solid #555;
-            margin-top:1.5mm;
+            margin-top:1mm;
             padding-top:0.5mm;
+            width: 100%;
+            display: inline-block;
         }
 
         .bottom{
@@ -156,26 +159,28 @@
             width:100%;
             height:10mm;
             background:#006064;
+            z-index: 10;
         }
 
         .report{
             background:#1b5e20;
             color:white;
-            font-size:8pt;
+            font-size:7pt;
             font-weight:bold;
-            padding:1.5mm 6mm;
+            padding:1.2mm 4mm;
             display:inline-block;
             margin-left:8mm;
-            margin-top:2mm;
+            margin-top:2.5mm;
         }
 
         .legal{
             position:absolute;
             right:8mm;
             bottom:3mm;
-            font-size:5pt;
+            font-size:4.5pt;
             color:#d1d5db;
             font-style:italic;
+            z-index: 20;
         }
 
 </style>
@@ -291,7 +296,7 @@ $barcodeData='';
 @endphp
 
 @if($barcodeData)
-<img src="data:image/png;base64,{{ $barcodeData }}" width="110">
+<img src="data:image/png;base64,{{ $barcodeData }}" width="90">
 @endif
 
 <div style="font-size:6pt;color:#6b7280;margin-top:1mm">
