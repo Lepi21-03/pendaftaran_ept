@@ -10,6 +10,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -36,7 +37,7 @@ class MasterPengawasResource extends Resource
     {
         return $schema
             ->components([
-                \Filament\Forms\Components\Section::make('Informasi Pengawas')
+                Section::make('Informasi Pengawas')
                     ->description('Masukkan nama lengkap pengawas yang akan bertugas.')
                     ->schema([
                         TextInput::make('nama')
