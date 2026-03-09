@@ -1,3 +1,11 @@
+{{--
+    Halaman Login Mahasiswa
+    Login menggunakan Email + Password (bukan NIM lagi).
+    
+    Setelah login berhasil:
+    - Session di-regenerate untuk keamanan
+    - User diarahkan ke halaman ujian
+--}}
 @extends('layouts.app')
 
 @section('title', 'Login | EPT Portal')
@@ -8,7 +16,7 @@
         <div class="p-8 sm:p-10">
             <div class="mb-8 text-center">
                 <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-2">Welcome Back</h1>
-                <p class="text-slate-500 dark:text-slate-400">Please enter your details to sign in.</p>
+                <p class="text-slate-500 dark:text-slate-400">Masukkan email dan password Anda untuk login.</p>
             </div>
             
             <form action="{{ route('mahasiswa.login.store') }}" class="space-y-6" method="POST">
@@ -19,8 +27,14 @@
                         {{ $errors->first() }}
                     </div>
                 @endif
+
+                @if(session('error'))
+                    <div class="p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+                        {{ session('error') }}
+                    </div>
+                @endif
                 
-                <!-- Email Field -->
+                {{-- Email Field --}}
                 <div class="space-y-2">
                     <label class="text-sm font-semibold text-slate-700 dark:text-slate-300 block" for="email">Email Address</label>
                     <div class="relative group">
@@ -29,18 +43,18 @@
                     </div>
                 </div>
 
-                <!-- Password Field -->
+                {{-- Password Field --}}
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
-                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="password">Student ID Number (NIM)</label>
+                        <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="password">Password</label>
                     </div>
                     <div class="relative group">
-                        <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-primary transition-colors">badge</span>
-                        <input class="w-full pl-11 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400" id="password" name="password" placeholder="Enter your 10-digit Student ID" required="" type="text"/>
+                        <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
+                        <input class="w-full pl-11 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400" id="password" name="password" placeholder="Masukkan password Anda" required="" type="password"/>
                     </div>
                 </div>
 
-                <!-- Login Button -->
+                {{-- Login Button --}}
                 <button type="submit" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
                     <span>Sign In</span>
                     <span class="material-symbols-outlined transition-transform group-hover/btn:translate-x-1">

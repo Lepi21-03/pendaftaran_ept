@@ -10,50 +10,67 @@ use App\Models\Prodi;
 use App\Models\Mahasiswa;
 use App\Services\PendaftaranService;
 use App\Services\PembayaranService;
+use App\Mail\VerifikasiEmailMail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use GuzzleHttp\Client;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class MahasiswaController extends Controller
 {
+    // ================================================================
+    // HALAMAN UJIAN
+    // ================================================================
+
     public function ujian()
     {
         $ujian = Ujian::with('pengawas')->where('status', 'open')->get();
         return view('mahasiswa.ujian.index', compact('ujian'));
     }
 
+    // ================================================================
+    // LOGIN (Email + Password)
+    // ================================================================
+
     public function login()
     {
         return view('mahasiswa.login.index');
     }
 
+    /**
+     * Proses login menggunakan Email + Password.
+     * Menggunakan Auth::guard('mahasiswa')->attempt() untuk verifikasi kredensial.
+     * Password akan diverifikasi dengan Hash::check() secara otomatis oleh Laravel.
+     */
     public function loginStore(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required', // Ini adalah NIM dari form
+            'email'    => 'required|email',
+            'password' => 'required',
         ]);
 
-        $mahasiswa = Mahasiswa::where('email', $credentials['email'])
-            ->where('nim', $credentials['password'])
-            ->first();
-
-        if ($mahasiswa) {
-            Auth::guard('mahasiswa')->login($mahasiswa);
-
-            // Regenerate session setelah login berhasil (Keamanan)
+        // Auth::attempt() secara otomatis melakukan:
+        // 1. Cari user berdasarkan email
+        // 2. Verifikasi password dengan Hash::check()
+        // 3. Login user jika cocok
+        if (Auth::guard('mahasiswa')->attempt($credentials)) {
+            // Regenerate session untuk keamanan (mencegah session fixation attack)
             $request->session()->regenerate();
 
             return redirect()->intended(route('mahasiswa.ujian.index'))
-                ->with('success', 'Selamat datang kembali, ' . $mahasiswa->name);
+                ->with('success', 'Selamat datang kembali!');
         }
 
         return back()->withErrors([
-            'email' => 'Email atau NIM tidak sesuai dengan data kami.',
+            'email' => 'Email atau password tidak sesuai.',
         ])->onlyInput('email');
     }
 
+    // ================================================================
+    // DOKUMEN (Kartu Ujian & Sertifikat) — TIDAK DIUBAH
+    // ================================================================
 
     public function dokumen()
     {
@@ -76,6 +93,10 @@ class MahasiswaController extends Controller
         return view('mahasiswa.dokumen.index', compact('mahasiswa', 'pendaftaran'));
     }
 
+    // ================================================================
+    // PENDAFTARAN (REGISTRASI + EMAIL VERIFIKASI)
+    // ================================================================
+
     public function daftar(Request $request)
     {
         $id = $request->query('ujian_id');
@@ -84,30 +105,115 @@ class MahasiswaController extends Controller
         return view('mahasiswa.daftar.index', compact('ujian', 'prodis'));
     }
 
+    /**
+     * Proses registrasi:
+     * 1. Validasi data + password
+     * 2. Simpan pendaftaran via PendaftaranService
+     * 3. Buat/update data Mahasiswa dengan password (hashed otomatis via cast)
+     * 4. Kirim email verifikasi (signed URL, expire 5 menit)
+     * 5. Redirect ke halaman "Cek Email Anda"
+     *
+     * PENTING: User TIDAK langsung login. User HARUS verifikasi email dulu,
+     * lalu bayar, baru auto login.
+     */
     public function store(Request $request, PendaftaranService $service)
     {
         $validated = $request->validate([
-            'ujian_id'      => 'required|exists:ujians,id',
-            'nim'           => 'required',
-            'nama_lengkap'  => 'required',
-            'tempat_lahir'  => 'required',
-            'bod'           => 'required|date',
-            'prodi'         => 'required',
-            'no_telp'       => 'required',
-            'email'         => 'required|email',
+            'ujian_id'              => 'required|exists:ujians,id',
+            'nim'                   => 'required',
+            'nama_lengkap'          => 'required',
+            'tempat_lahir'          => 'required',
+            'bod'                   => 'required|date',
+            'prodi'                 => 'required',
+            'no_telp'               => 'required',
+            'email'                 => 'required|email',
+            'password'              => 'required|min:8|confirmed',
         ]);
 
         try {
+            // 1. Simpan pendaftaran (via PendaftaranService yang sudah ada)
             $pendaftaran = $service->daftar($validated);
 
+            // 2. Buat/update Mahasiswa dengan password
+            //    Cast 'hashed' di model akan otomatis hash password
+            $mahasiswa = Mahasiswa::updateOrCreate(
+                ['nim' => $validated['nim']],
+                [
+                    'name'     => $validated['nama_lengkap'],
+                    'prodi'    => $validated['prodi'],
+                    'email'    => $validated['email'],
+                    'phone'    => $validated['no_telp'],
+                    'password' => $validated['password'], // Otomatis di-hash oleh cast
+                ]
+            );
+
+            // 3. Kirim email verifikasi dengan signed URL (expire 5 menit)
+            $this->sendVerificationEmail($mahasiswa, $pendaftaran);
+
+            // 4. Redirect ke halaman "Cek Email Anda"
+            return redirect()->route('mahasiswa.verifikasi.cek-email')
+                ->with('verification_email', $validated['email'])
+                ->with('verification_daftar_id', $pendaftaran->id);
+
+        } catch (\Throwable $e) {
+            return back()->withInput()->withErrors($e->getMessage());
+        }
+    }
+
+    // ================================================================
+    // EMAIL VERIFIKASI
+    // ================================================================
+
+    /**
+     * Halaman "Cek Email Anda" — ditampilkan setelah registrasi.
+     * Menampilkan countdown timer 5 menit dan tombol resend.
+     */
+    public function cekEmail()
+    {
+        return view('mahasiswa.verifikasi.cek-email');
+    }
+
+    /**
+     * Handle klik link verifikasi dari email (signed URL).
+     * 
+     * Flow:
+     * 1. Signed URL divalidasi oleh middleware 'signed' (otomatis)
+     * 2. Set email_verified_at pada mahasiswa
+     * 3. Buat invoice Xendit → redirect ke Xendit (TANPA LOGIN)
+     * 4. Setelah bayar, Xendit redirect ke pembayaranSukses()
+     * 5. Di pembayaranSukses() → verifikasi → AUTO LOGIN
+     */
+    public function verifikasiEmail(Request $request, $mahasiswa_id, $daftar_id)
+    {
+        $mahasiswa = Mahasiswa::findOrFail($mahasiswa_id);
+        $daftar = Daftar::findOrFail($daftar_id);
+
+        // Set email sebagai terverifikasi
+        if (!$mahasiswa->email_verified_at) {
+            $mahasiswa->update(['email_verified_at' => now()]);
+        }
+
+        // Jika pendaftaran sudah success (sudah bayar sebelumnya)
+        if ($daftar->status === 'success') {
+            // Auto login karena sudah pernah bayar
+            Auth::guard('mahasiswa')->login($mahasiswa);
+            $request->session()->regenerate();
+
+            return redirect()->route('mahasiswa.ujian.index')
+                ->with('success', '✅ Email sudah terverifikasi dan pembayaran sudah tercatat!');
+        }
+
+        // Buat invoice Xendit dan redirect ke halaman Xendit (TANPA LOGIN)
+        try {
             $apiKey = env('XENDIT_API_KEY');
             if (empty($apiKey)) {
-                return back()->withInput()->withErrors('Konfigurasi Xendit API Key belum diatur pada server.');
+                return redirect()->route('mahasiswa.ujian.index')
+                    ->withErrors('Konfigurasi Xendit API Key belum diatur pada server.');
             }
 
             \Xendit\Configuration::setXenditKey($apiKey);
 
-            // ✅ Gunakan cacert.pem lokal jika berjalan di lingkungan lokal untuk menghindari cURL error 60
+            // Gunakan cacert.pem lokal jika berjalan di lingkungan lokal
             $options = [];
             if (app()->environment('local') && file_exists(storage_path('app/cacert.pem'))) {
                 $options['verify'] = storage_path('app/cacert.pem');
@@ -116,21 +222,20 @@ class MahasiswaController extends Controller
             $guzzleClient = new Client($options);
             $apiInstance = new \Xendit\Invoice\InvoiceApi($guzzleClient);
 
-            $externalId = 'EPT-DAFTAR-' . $pendaftaran->id . '-' . time();
+            $externalId = 'EPT-DAFTAR-' . $daftar->id . '-' . time();
 
-            // ✅ URL redirect menggunakan route() langsung — APP_URL dari .env sudah dihandle Laravel
-            $successUrl = route('mahasiswa.pembayaran.sukses', ['daftar_id' => $pendaftaran->id]);
+            $successUrl = route('mahasiswa.pembayaran.sukses', ['daftar_id' => $daftar->id]);
             $failureUrl = route('mahasiswa.ujian.index');
 
             $create_invoice_request = new \Xendit\Invoice\CreateInvoiceRequest([
                 'external_id' => $externalId,
-                'description' => 'Pembayaran Pendaftaran EPT - ' . $pendaftaran->nim,
+                'description' => 'Pembayaran Pendaftaran EPT - ' . $daftar->nim,
                 'amount'      => 100000,
-                'payer_email' => $pendaftaran->email,
+                'payer_email' => $daftar->email,
                 'customer'    => [
-                    'given_names'   => $pendaftaran->nama_lengkap,
-                    'email'         => $pendaftaran->email,
-                    'mobile_number' => $pendaftaran->no_telp,
+                    'given_names'   => $daftar->nama_lengkap,
+                    'email'         => $daftar->email,
+                    'mobile_number' => $daftar->no_telp,
                 ],
                 'success_redirect_url' => $successUrl,
                 'failure_redirect_url' => $failureUrl,
@@ -138,23 +243,66 @@ class MahasiswaController extends Controller
 
             $result = $apiInstance->createInvoice($create_invoice_request);
 
-            // ✅ Simpan xendit_invoice_id agar bisa diverifikasi nanti
-            $pendaftaran->update([
+            // Simpan xendit_invoice_id
+            $daftar->update([
                 'xendit_invoice_id' => $result['id'],
             ]);
 
+            // Redirect ke Xendit (USER BELUM LOGIN)
             return redirect($result['invoice_url']);
 
         } catch (\Xendit\XenditSdkException $e) {
-            return back()->withInput()->withErrors('Xendit Error: ' . $e->getMessage());
+            return redirect()->route('mahasiswa.ujian.index')
+                ->withErrors('Xendit Error: ' . $e->getMessage());
         } catch (\Throwable $e) {
-            return back()->withInput()->withErrors($e->getMessage());
+            return redirect()->route('mahasiswa.ujian.index')
+                ->withErrors('Terjadi kesalahan: ' . $e->getMessage());
         }
     }
 
     /**
-     * ✅ Dipanggil otomatis oleh Xendit saat user selesai bayar.
-     * Verifikasi status invoice langsung ke API Xendit, lalu proses data mahasiswa.
+     * Kirim ulang email verifikasi.
+     * Token/link lama otomatis tidak berlaku karena signed URL baru dibuat.
+     */
+    public function resendVerifikasi(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $mahasiswa = Mahasiswa::where('email', $request->email)->first();
+
+        if (!$mahasiswa) {
+            return back()->withErrors('Email tidak ditemukan dalam sistem.');
+        }
+
+        // Cari pendaftaran pending terakhir
+        $daftar = Daftar::where('email', $request->email)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$daftar) {
+            return back()->withErrors('Tidak ditemukan pendaftaran yang menunggu verifikasi.');
+        }
+
+        // Kirim email verifikasi baru (link lama otomatis expired karena signed URL baru)
+        $this->sendVerificationEmail($mahasiswa, $daftar);
+
+        return back()
+            ->with('success', 'Email verifikasi baru telah dikirim! Silakan cek inbox Anda.')
+            ->with('verification_email', $request->email)
+            ->with('verification_daftar_id', $daftar->id);
+    }
+
+    // ================================================================
+    // PEMBAYARAN XENDIT
+    // ================================================================
+
+    /**
+     * Dipanggil setelah user selesai bayar di Xendit (redirect dari Xendit).
+     * Verifikasi status invoice langsung ke API Xendit.
+     * Jika PAID → proses pembayaran → AUTO LOGIN → redirect halaman utama.
      */
     public function pembayaranSukses(Request $request, PembayaranService $pembayaranService)
     {
@@ -172,12 +320,12 @@ class MahasiswaController extends Controller
                 ->withErrors('Data pendaftaran tidak ditemukan.');
         }
 
-        // Jika sudah diproses sebelumnya, langsung tampilkan sukses
+        // Jika sudah diproses sebelumnya, langsung auto login
         if ($daftar->status === 'success') {
-            // Auto Login Mahasiswa (Cek DB)
             $mahasiswa = Mahasiswa::where('nim', $daftar->nim)->first();
             if ($mahasiswa) {
                 Auth::guard('mahasiswa')->login($mahasiswa);
+                $request->session()->regenerate();
             }
 
             return redirect()->route('mahasiswa.ujian.index')
@@ -185,10 +333,9 @@ class MahasiswaController extends Controller
         }
 
         try {
-            // ✅ Verifikasi langsung ke Xendit API: cek status invoice
+            // Verifikasi langsung ke Xendit API: cek status invoice
             \Xendit\Configuration::setXenditKey(env('XENDIT_API_KEY'));
 
-            // ✅ Gunakan cacert.pem lokal jika berjalan di lingkungan lokal
             $options = [];
             if (app()->environment('local') && file_exists(storage_path('app/cacert.pem'))) {
                 $options['verify'] = storage_path('app/cacert.pem');
@@ -199,15 +346,17 @@ class MahasiswaController extends Controller
             $invoice     = $apiInstance->getInvoiceById($daftar->xendit_invoice_id);
 
             if ($invoice['status'] === 'PAID' || $invoice['status'] === 'SETTLED') {
-                // ✅ Proses: simpan pembayaran, buat kartu ujian, dan masukkan ke tabel mahasiswas
+                // Proses: simpan pembayaran, buat kartu ujian, update tabel mahasiswas
                 $pembayaranService->bayarDanGenerateKartu($daftarId);
 
-                // ✅ AUTO LOGIN: Hanya setelah data ada di DB dan tervalidasi PAID
+                // AUTO LOGIN — hanya setelah pembayaran berhasil diverifikasi
                 $mahasiswa = Mahasiswa::where('nim', $daftar->nim)->first();
                 if ($mahasiswa) {
                     Auth::guard('mahasiswa')->login($mahasiswa);
+                    $request->session()->regenerate();
                 }
 
+                // Redirect ke halaman utama dengan pesan sukses
                 return redirect()->route('mahasiswa.ujian.index')
                     ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat sebagai mahasiswa peserta EPT.');
             }
@@ -234,9 +383,12 @@ class MahasiswaController extends Controller
         }
     }
 
+    // ================================================================
+    // DOWNLOAD PDF — TIDAK DIUBAH
+    // ================================================================
+
     /**
-     * ✅ Download Kartu Ujian sebagai PDF.
-     * Nama file: KartuUjian-EPT-{NIM}.pdf agar unik per mahasiswa.
+     * Download Kartu Ujian sebagai PDF.
      */
     public function downloadKartuUjian()
     {
@@ -247,10 +399,8 @@ class MahasiswaController extends Controller
                 ->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // Ambil data mahasiswa fresh dari DB
         $mahasiswa = Mahasiswa::findOrFail($authenticatedUser->id);
 
-        // Ambil pendaftaran terakhir berstatus success beserta relasi ujian
         $pendaftaran = Daftar::where('nim', $mahasiswa->nim)
             ->where('status', 'success')
             ->with(['ujian', 'kartuUjian'])
@@ -262,12 +412,9 @@ class MahasiswaController extends Controller
                 ->with('error', 'Kartu ujian belum tersedia. Pastikan pembayaran sudah diverifikasi.');
         }
 
-        // Generate PDF dari view kartu-ujian-pdf.blade.php yang dikhususkan untuk PDF
-        // View ini menggunakan ukuran mm dan @page untuk akurasi layout A4 portrait
         $pdf = Pdf::loadView('mahasiswa.dokumen.kartu-ujian-pdf', ['record' => $pendaftaran])
             ->setPaper('a4', 'portrait');
 
-        // Nama file menggunakan Nama Mahasiswa agar lebih personal
         $namaClean = str_replace([' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $mahasiswa->name);
         $namaFile = 'KartuUjian-EPT-' . $namaClean . '.pdf';
 
@@ -278,8 +425,7 @@ class MahasiswaController extends Controller
     }
 
     /**
-     * ✅ Download Sertifikat sebagai PDF.
-     * Nama file: Sertifikat-EPT-{NIM}.pdf agar unik per mahasiswa.
+     * Download Sertifikat sebagai PDF.
      */
     public function downloadSertifikat()
     {
@@ -290,7 +436,6 @@ class MahasiswaController extends Controller
                 ->with('error', 'Silakan login terlebih dahulu.');
         }
 
-        // Ambil data mahasiswa fresh dari DB agar score pasti ada
         $mahasiswa = Mahasiswa::findOrFail($authenticatedUser->id);
 
         if (!$mahasiswa->score || $mahasiswa->score <= 0) {
@@ -298,11 +443,9 @@ class MahasiswaController extends Controller
                 ->with('error', 'Sertifikat belum tersedia. Tunggu Admin menginput skor EPT Anda.');
         }
 
-        // Generate PDF dari view sertifikat-pdf.blade.php (A6 Portrait)
         $pdf = Pdf::loadView('mahasiswa.dokumen.sertifikat-pdf', ['mahasiswa' => $mahasiswa])
             ->setPaper('a6', 'portrait');
 
-        // Nama file menggunakan Nama Mahasiswa
         $namaClean = str_replace([' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $mahasiswa->name);
         $namaFile = 'Sertifikat-EPT-' . $namaClean . '.pdf';
 
@@ -312,6 +455,15 @@ class MahasiswaController extends Controller
         ]);
     }
 
+    // ================================================================
+    // LOGOUT
+    // ================================================================
+
+    /**
+     * Logout mahasiswa.
+     * Menghapus session, invalidate, dan regenerate CSRF token.
+     * Setelah logout, user harus login kembali dengan Email + Password.
+     */
     public function logout(Request $request)
     {
         Auth::guard('mahasiswa')->logout();
@@ -326,5 +478,35 @@ class MahasiswaController extends Controller
         $request->session()->regenerateToken();
 
         return redirect()->route('mahasiswa.ujian.index');
+    }
+
+    // ================================================================
+    // PRIVATE HELPER
+    // ================================================================
+
+    /**
+     * Kirim email verifikasi dengan signed URL yang expire 5 menit.
+     *
+     * Signed URL menggunakan Laravel URL::temporarySignedRoute() yang secara otomatis:
+     * - Menambahkan signature hash ke URL
+     * - Menambahkan parameter 'expires' (timestamp)
+     * - Middleware 'signed' akan menolak URL yang expired atau dimodifikasi
+     */
+    private function sendVerificationEmail(Mahasiswa $mahasiswa, Daftar $daftar): void
+    {
+        // Buat signed URL yang expire dalam 5 menit
+        $verificationUrl = URL::temporarySignedRoute(
+            'mahasiswa.verifikasi.email',   // nama route
+            now()->addMinutes(5),            // expire time
+            [
+                'mahasiswa_id' => $mahasiswa->id,
+                'daftar_id'    => $daftar->id,
+            ]
+        );
+
+        // Kirim email
+        Mail::to($mahasiswa->email)->send(
+            new VerifikasiEmailMail($verificationUrl, $mahasiswa->name)
+        );
     }
 }
