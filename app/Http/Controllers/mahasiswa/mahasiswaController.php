@@ -295,6 +295,23 @@ class MahasiswaController extends Controller
             ->with('verification_daftar_id', $daftar->id);
     }
 
+    /**
+     * API: Cek status pembayaran pendaftaran (dipanggil via AJAX polling).
+     * Halaman cek-email memanggil ini setiap 3 detik untuk mendeteksi
+     * apakah pembayaran sudah selesai di tab lain.
+     * Mengembalikan JSON { status: 'pending' | 'success' }
+     */
+    public function cekStatusPembayaran($daftar_id)
+    {
+        $daftar = Daftar::find($daftar_id);
+
+        if (!$daftar) {
+            return response()->json(['status' => 'not_found']);
+        }
+
+        return response()->json(['status' => $daftar->status]);
+    }
+
     // ================================================================
     // PEMBAYARAN XENDIT
     // ================================================================
@@ -328,8 +345,8 @@ class MahasiswaController extends Controller
                 $request->session()->regenerate();
             }
 
-            return redirect()->route('mahasiswa.ujian.index')
-                ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat.');
+            // Tampilkan halaman "tutup tab" inline — tab cek-email sudah mendeteksi via polling
+            return $this->selfClosingResponse();
         }
 
         try {
@@ -356,9 +373,8 @@ class MahasiswaController extends Controller
                     $request->session()->regenerate();
                 }
 
-                // Redirect ke halaman utama dengan pesan sukses
-                return redirect()->route('mahasiswa.ujian.index')
-                    ->with('success', '✅ Pembayaran berhasil! Data kamu sudah tercatat sebagai mahasiswa peserta EPT.');
+                // Tampilkan halaman "tutup tab" — tab cek-email sudah mendeteksi via polling
+                return view('mahasiswa.pembayaran.sukses-tutup');
             }
 
             // Invoice belum dibayar
@@ -508,5 +524,30 @@ class MahasiswaController extends Controller
         Mail::to($mahasiswa->email)->send(
             new VerifikasiEmailMail($verificationUrl, $mahasiswa->name)
         );
+    }
+
+    /**
+     * Response inline HTML yang mencoba menutup tab browser secara otomatis.
+     * Digunakan setelah pembayaran Xendit berhasil agar tab Xendit tertutup
+     * dan user kembali ke tab cek-email yang sudah mendeteksi sukses via polling.
+     */
+    private function selfClosingResponse()
+    {
+        $html = '<!DOCTYPE html><html><head><title>Pembayaran Berhasil</title>'
+            . '<script src="https://cdn.tailwindcss.com"></script>'
+            . '<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>'
+            . '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>'
+            . '<style>body{font-family:"Plus Jakarta Sans",sans-serif}</style></head>'
+            . '<body class="bg-slate-50 min-h-screen flex items-center justify-center p-6">'
+            . '<div class="w-full max-w-md bg-white rounded-xl shadow-lg border border-slate-200 p-8 text-center">'
+            . '<div class="mx-auto w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-5">'
+            . '<span class="material-symbols-outlined text-green-500 text-4xl">check_circle</span></div>'
+            . '<h1 class="text-2xl font-bold text-slate-900 mb-2">Pembayaran Berhasil! ✅</h1>'
+            . '<p class="text-slate-500 text-sm mb-6">Tab ini akan tertutup otomatis. Silakan kembali ke tab sebelumnya.</p>'
+            . '<p id="h" class="hidden text-slate-400 text-xs">Jika tab tidak tertutup, Anda bisa menutupnya secara manual.</p></div>'
+            . '<script>setTimeout(function(){window.close();setTimeout(function(){document.getElementById("h").classList.remove("hidden")},500)},1500)</script>'
+            . '</body></html>';
+
+        return response($html);
     }
 }
