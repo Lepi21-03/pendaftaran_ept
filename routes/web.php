@@ -40,6 +40,10 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::post('/verifikasi/resend', [MahasiswaController::class, 'resendVerifikasi'])
         ->name('verifikasi.resend');
 
+    // API: Cek status pembayaran (dipanggil via AJAX polling dari halaman cek-email)
+    Route::get('/verifikasi/cek-status/{daftar_id}', [MahasiswaController::class, 'cekStatusPembayaran'])
+        ->name('verifikasi.cek-status');
+
     // ================================================================
     // DOKUMEN — dilindungi middleware (email verified + pembayaran success)
     // ================================================================
