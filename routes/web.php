@@ -22,17 +22,40 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::post('/login', [MahasiswaController::class, 'loginStore'])
         ->name('login.store');
 
-    // halaman dokumen/sertifikat
-    Route::get('/dokumen', [MahasiswaController::class, 'dokumen'])
-        ->name('dokumen');
+    // ================================================================
+    // VERIFIKASI EMAIL
+    // ================================================================
 
-    // ✅ Download Kartu Ujian sebagai PDF (menggunakan NIM sebagai nama file agar unik)
-    Route::get('/dokumen/kartu-ujian/download', [MahasiswaController::class, 'downloadKartuUjian'])
-        ->name('dokumen.kartu-ujian.download');
+    // Halaman "Cek Email Anda" (setelah registrasi)
+    Route::get('/verifikasi/cek-email', [MahasiswaController::class, 'cekEmail'])
+        ->name('verifikasi.cek-email');
 
-    // ✅ Download Sertifikat sebagai PDF (menggunakan NIM sebagai nama file agar unik)
-    Route::get('/dokumen/sertifikat/download', [MahasiswaController::class, 'downloadSertifikat'])
-        ->name('dokumen.sertifikat.download');
+    // Handle klik link verifikasi (signed URL, expire 5 menit)
+    // Middleware 'signed' memvalidasi signature dan expiry secara otomatis
+    Route::get('/verifikasi/email/{mahasiswa_id}/{daftar_id}', [MahasiswaController::class, 'verifikasiEmail'])
+        ->name('verifikasi.email')
+        ->middleware('signed');
+
+    // Kirim ulang email verifikasi
+    Route::post('/verifikasi/resend', [MahasiswaController::class, 'resendVerifikasi'])
+        ->name('verifikasi.resend');
+
+    // ================================================================
+    // DOKUMEN — dilindungi middleware (email verified + pembayaran success)
+    // ================================================================
+    Route::middleware(['email.verified', 'pembayaran.success'])->group(function () {
+        // halaman dokumen/sertifikat
+        Route::get('/dokumen', [MahasiswaController::class, 'dokumen'])
+            ->name('dokumen');
+
+        // Download Kartu Ujian sebagai PDF
+        Route::get('/dokumen/kartu-ujian/download', [MahasiswaController::class, 'downloadKartuUjian'])
+            ->name('dokumen.kartu-ujian.download');
+
+        // Download Sertifikat sebagai PDF
+        Route::get('/dokumen/sertifikat/download', [MahasiswaController::class, 'downloadSertifikat'])
+            ->name('dokumen.sertifikat.download');
+    });
 
     // halaman daftar
     Route::get('/daftar', [MahasiswaController::class, 'daftar'])
@@ -41,7 +64,7 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::post('/daftar', [MahasiswaController::class, 'store'])
         ->name('daftar.store');
 
-    // ✅ Route ini dipanggil Xendit saat user berhasil bayar
+    // Route dipanggil Xendit saat user berhasil bayar (redirect dari Xendit)
     Route::get('/pembayaran/sukses', [MahasiswaController::class, 'pembayaranSukses'])
         ->name('pembayaran.sukses');
 

@@ -1,3 +1,11 @@
+{{--
+    Halaman Registrasi / Pendaftaran EPT
+    
+    Perubahan dari versi sebelumnya:
+    - Ditambahkan field Password dan Confirm Password
+    - Tombol diubah dari "Proceed to Payment" menjadi "Daftar & Verifikasi Email"
+    - Setelah submit, user diarahkan ke halaman "Cek Email Anda" (bukan langsung ke Xendit)
+--}}
 @extends('layouts.app')
 
 @section('content')
@@ -67,6 +75,30 @@
                         @error('prodi') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
+
+                {{-- PASSWORD SECTION --}}
+                <div class="border-t border-slate-100 dark:border-slate-700 pt-6">
+                    <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-4">Create Your Account Password</h3>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Password ini akan digunakan untuk login ke sistem setelah pendaftaran selesai.</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="password">Password</label>
+                            <div class="relative group">
+                                <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
+                                <input class="block w-full pl-11 pr-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="password" name="password" placeholder="Minimal 8 karakter" required="" type="password"/>
+                            </div>
+                            @error('password') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                        <div class="space-y-2">
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300" for="password_confirmation">Confirm Password</label>
+                            <div class="relative group">
+                                <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
+                                <input class="block w-full pl-11 pr-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="password_confirmation" name="password_confirmation" placeholder="Ketik ulang password" required="" type="password"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg">
                     <div class="flex items-start gap-3">
                         <span class="material-icons text-primary mt-0.5">info</span>
@@ -79,7 +111,7 @@
                 <div class="pt-6 flex justify-end">
                     <button type="submit" 
                         class="w-full sm:w-auto bg-primary hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg shadow-blue-500/25 transition-all flex items-center justify-center gap-2 group/btn">
-                        <span>Proceed to Payment</span>
+                        <span>Daftar & Verifikasi Email</span>
                         <span class="material-symbols-outlined transition-transform group-hover/btn:translate-x-1">
                             arrow_forward
                         </span>
