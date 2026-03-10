@@ -428,7 +428,21 @@ class MahasiswaController extends Controller
                 ->with('error', 'Kartu ujian belum tersedia. Pastikan pembayaran sudah diverifikasi.');
         }
 
-        $pdf = Pdf::loadView('mahasiswa.dokumen.kartu-ujian-pdf', ['record' => $pendaftaran])
+        // Generate QR code and convert to base64 for DomPDF compatibility
+        $qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" . urlencode(url('/'));
+        $qrBase64 = '';
+        try {
+            $qrContent = file_get_contents($qrUrl);
+            $qrBase64 = 'data:image/png;base64,' . base64_encode($qrContent);
+        } catch (\Exception $e) {
+            // Fallback to URL if file_get_contents fails, but usually this is why it won't show in PDF
+            $qrBase64 = $qrUrl;
+        }
+
+        $pdf = Pdf::loadView('mahasiswa.dokumen.kartu-ujian-pdf', [
+            'record' => $pendaftaran,
+            'qrCode' => $qrBase64
+        ])
             ->setPaper('a4', 'portrait');
 
         $namaClean = str_replace([' ', '/', '\\', ':', '*', '?', '"', '<', '>', '|'], '-', $mahasiswa->name);
