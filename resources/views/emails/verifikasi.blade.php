@@ -14,7 +14,7 @@
                     <tr>
                         <td style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 32px 40px; text-align: center;">
                             <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">
-                                📧 Verifikasi Email Anda
+                                📧 Verify Your Email
                             </h1>
                         </td>
                     </tr>
@@ -23,11 +23,11 @@
                     <tr>
                         <td style="padding: 40px;">
                             <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
-                                Halo <strong>{{ $namaUser }}</strong>,
+                                Dear <strong>{{ $namaUser }}</strong>,
                             </p>
                             <p style="color: #475569; font-size: 15px; line-height: 1.6; margin: 0 0 24px;">
-                                Terima kasih telah mendaftar untuk <strong>English Proficiency Test (EPT)</strong>. 
-                                Silakan klik tombol di bawah ini untuk memverifikasi email Anda dan melanjutkan ke pembayaran.
+                                Thank you for registering for the <strong>English Proficiency Test (EPT)</strong>. 
+                                Please click the button below to verify your email and proceed to payment.
                             </p>
 
                             {{-- CTA Button --}}
@@ -36,7 +36,7 @@
                                     <td align="center" style="padding: 8px 0 24px;">
                                         <a href="{{ $verificationUrl }}" 
                                            style="display: inline-block; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 10px; font-size: 16px; font-weight: 700; box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);">
-                                            ✅ Verifikasi & Lanjutkan Pembayaran
+                                            ✅ Verify & Continue to Payment
                                         </a>
                                     </td>
                                 </tr>
@@ -45,13 +45,13 @@
                             {{-- Warning --}}
                             <div style="background-color: #fef3c7; border-left: 4px solid #f59e0b; padding: 14px 18px; border-radius: 6px; margin-bottom: 24px;">
                                 <p style="color: #92400e; font-size: 13px; margin: 0; line-height: 1.5;">
-                                    ⏰ <strong>Link ini hanya berlaku selama 5 menit.</strong> 
-                                    Setelah itu, Anda perlu meminta link verifikasi baru.
+                                    ⏰ <strong>This link is only valid for 5 minutes.</strong> 
+                                    After that, you need to request a new verification link.
                                 </p>
                             </div>
 
                             <p style="color: #94a3b8; font-size: 13px; line-height: 1.5; margin: 0;">
-                                Jika Anda tidak merasa mendaftar EPT, abaikan email ini.
+                                If you did not register for EPT, please ignore this email.
                             </p>
                         </td>
                     </tr>

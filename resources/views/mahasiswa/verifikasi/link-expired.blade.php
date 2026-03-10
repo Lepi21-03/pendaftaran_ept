@@ -18,9 +18,9 @@
                 <div class="mx-auto w-20 h-20 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-5">
                     <span class="material-symbols-outlined text-red-500 text-4xl">timer_off</span>
                 </div>
-                <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Link Verifikasi Telah Kadaluarsa</h1>
+                <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Link Expired</h1>
                 <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                    Link verifikasi email Anda sudah tidak berlaku. Silakan minta link verifikasi baru.
+                    Your verification link has expired. Please request a new verification link.
                 </p>
             </div>
 
@@ -33,13 +33,13 @@
                         <div class="relative group">
                             <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-primary transition-colors">mail</span>
                             <input class="w-full pl-11 pr-4 py-3 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400" 
-                                   id="email" name="email" placeholder="Masukkan email Anda" required type="email" />
+                                   id="email" name="email" placeholder="Enter your email" required type="email" />
                         </div>
                     </div>
                     <button type="submit" 
                         class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined">send</span>
-                        <span>Kirim Link Verifikasi Baru</span>
+                        <span>Send Verification Link</span>
+                            <span class="material-symbols-outlined">send</span>
                     </button>
                 </div>
             </form>
@@ -59,7 +59,7 @@
             {{-- Back --}}
             <div class="mt-6 text-center">
                 <a href="{{ route('mahasiswa.ujian.index') }}" class="text-sm text-slate-500 hover:text-primary transition-colors">
-                    ← Kembali ke halaman ujian
+                    ← Back to EPT Page
                 </a>
             </div>
         </div>

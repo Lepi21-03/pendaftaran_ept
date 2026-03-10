@@ -28,12 +28,12 @@
                     <div class="mx-auto w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center mb-5">
                         <span class="material-symbols-outlined text-primary text-4xl">mark_email_read</span>
                     </div>
-                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Cek Email Anda</h1>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Check Your Email</h1>
                     <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                        Kami telah mengirim email verifikasi ke:
+                        We have sent a verification email to:
                     </p>
                     <p class="text-primary font-semibold mt-1">
-                        {{ session('verification_email', 'email anda') }}
+                        {{ session('verification_email', 'Your Email') }}
                     </p>
                 </div>
 
@@ -43,8 +43,8 @@
                         <span class="material-symbols-outlined text-primary mt-0.5">info</span>
                         <div>
                             <p class="text-sm text-blue-800 dark:text-blue-300 leading-relaxed">
-                                Silakan buka email Anda dan klik tombol <strong>"Verifikasi & Lanjutkan Pembayaran"</strong> 
-                                untuk memverifikasi akun dan melanjutkan ke pembayaran.
+                                Please click the button <strong>"Verify & Continue to Payment"</strong> 
+                                to verify your account and proceed to payment.
                             </p>
                         </div>
                     </div>
@@ -52,12 +52,12 @@
 
                 {{-- Countdown Timer --}}
                 <div class="mb-6 text-center">
-                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">Link verifikasi berlaku selama:</p>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mb-2">The verification link is valid for:</p>
                     <div id="countdown" class="text-3xl font-bold text-slate-900 dark:text-white font-mono tracking-wider">
                         05:00
                     </div>
                     <p id="expired-text" class="hidden text-red-500 font-semibold text-sm mt-2">
-                        ⏰ Link verifikasi telah kadaluarsa!
+                        ⏰ The verification link has expired!
                     </p>
                 </div>
 
@@ -70,7 +70,7 @@
                         <button type="submit" 
                             class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined">send</span>
-                            <span>Kirim Ulang Email Verifikasi</span>
+                            <span>Resend Verification Email</span>
                         </button>
                     </form>
                 </div>
@@ -91,7 +91,7 @@
                 {{-- Back to registration --}}
                 <div class="mt-6 text-center">
                     <a href="{{ route('mahasiswa.ujian.index') }}" class="text-sm text-slate-500 hover:text-primary transition-colors">
-                        ← Kembali ke halaman ujian
+                        ← Back to EPT Page
                     </a>
                 </div>
             </div>
@@ -104,9 +104,9 @@
                     <div class="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-5">
                         <span class="material-symbols-outlined text-green-500 text-4xl">check_circle</span>
                     </div>
-                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Pembayaran Berhasil! 🎉</h1>
+                    <h1 class="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">Payment Verified! 🎉</h1>
                     <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed">
-                        Pembayaran Anda telah berhasil diverifikasi. Anda sudah terdaftar sebagai peserta EPT.
+                        Your payment has been successfully verified. You are now registered as an EPT participant.
                     </p>
                 </div>
 
@@ -116,7 +116,7 @@
                         <span class="material-symbols-outlined text-green-500 mt-0.5">verified</span>
                         <div>
                             <p class="text-sm text-green-800 dark:text-green-300 leading-relaxed">
-                                Anda sudah otomatis login ke sistem. Silakan lanjutkan ke halaman utama.
+                                You are now automatically logged into the system. Please proceed to the main page.
                             </p>
                         </div>
                     </div>
@@ -126,7 +126,7 @@
                 <a href="{{ route('mahasiswa.ujian.index') }}" 
                    class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2">
                     <span class="material-symbols-outlined">home</span>
-                    <span>Ke Halaman Utama</span>
+                    <span>Go to Main Page</span>
                 </a>
             </div>
 
