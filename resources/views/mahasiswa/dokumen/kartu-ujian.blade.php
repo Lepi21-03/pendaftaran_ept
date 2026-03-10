@@ -96,7 +96,7 @@
     
     .footer-table {
         width: 100%;
-        margin-top: 40px;
+        margin-top: 15px;
     }
     .notes-box {
         font-size: 7px;
@@ -190,20 +190,10 @@
             </tr>
         </table>
 
-        <table class="footer-table">
-            <tr>
-                <td class="notes-box">
-                    <strong>PENTING:</strong><br>
-                    * Harap membawa kartu ini saat ujian.<br>
-                    * Datang 15 menit sebelum ujian dimulai.
-                </td>
-                <td class="sig-box">
-                    Ungaran, {{ now()->translatedFormat('d F Y') }}<br>
-                    Ketua Pelaksana,<br>
-                    <div class="sig-line"></div><br>
-                    (___________________)
-                </td>
-            </tr>
-        </table>
+        <!-- Absolute QR Code -->
+        <div style="position: absolute; bottom: 4mm; right: 4mm; width: 35px; height: 35px; background: white; border: 1px solid #eee; padding: 2px; z-index: 10;">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data={{ urlencode(url('/')) }}" 
+                 alt="QR Code" style="width: 100%; height: 100%;">
+        </div>
     </div>
 </div>

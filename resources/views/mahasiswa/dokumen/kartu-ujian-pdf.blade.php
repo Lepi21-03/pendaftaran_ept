@@ -72,7 +72,7 @@
         
         .footer-table {
             width: 100%;
-            margin-top: 5mm;
+            margin-top: 2mm;
         }
         .notes-box {
             font-size: 6pt;
@@ -157,21 +157,10 @@
             </tr>
         </table>
 
-        <table class="footer-table">
-            <tr>
-                <td class="notes-box">
-                    <strong>PENTING:</strong><br>
-                    * Harap membawa kartu ini saat ujian.<br>
-                    * Datang 15 menit sebelum ujian dimulai.
-                </td>
-                <td class="sig-box">
-                    Ungaran, {{ now()->translatedFormat('d F Y') }}<br>
-                    Ketua Pelaksana,<br>
-                    <div class="sig-line"></div>
-                    (___________________)
-                </td>
-            </tr>
-        </table>
+        <!-- Absolute QR Code for PDF -->
+        <div style="position: absolute; bottom: 3mm; right: 3mm; width: 10mm; height: 10mm; background: white; border: 0.5pt solid #eee; padding: 0.5mm;">
+            <img src="{{ $qrCode }}" alt="QR Code" style="width: 100%; height: 100%;">
+        </div>
     </div>
 </body>
 </html>
