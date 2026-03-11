@@ -31,9 +31,9 @@
                         <div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 p-4 rounded-xl text-amber-800 dark:text-amber-400 inline-block">
                             <p class="flex items-center gap-2 font-bold">
                                 <span class="material-symbols-outlined">warning</span>
-                                Kartu Ujian Belum Tersedia
+                                Exam Card Not Available Yet
                             </p>
-                            <p class="text-sm mt-1">Pembayaran Anda belum diverifikasi atau pendaftaran belum aktif.</p>
+                            <p class="text-sm mt-1">Your payment has not been verified or registration is not active.</p>
                         </div>
                     </div>
                 @endif
