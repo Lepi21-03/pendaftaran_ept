@@ -58,7 +58,7 @@
         vertical-align: middle;
     }
     .logo-circle {
-        width: 70px;
+        width: 100px;
         margin: 0 auto 15px auto;
         display: block;
         background: transparent;
@@ -68,13 +68,13 @@
         text-align: center;
     }
     .unw-title {
-        font-size: 18px;
+        font-size: 20px;
         font-weight: 900;
         line-height: 1;
         letter-spacing: 0.5px;
     }
     .unw-sub {
-        font-size: 9px;
+        font-size: 12px;
         letter-spacing: 1.5px;
         margin-top: 2px;
     }
@@ -86,10 +86,10 @@
         margin-bottom: 8px;
     }
     .info-label {
-        width: 140px;
+        width: 150px;
         background: linear-gradient(90deg, #43a047, #66bb6a);
         color: white;
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 600;
         padding: 5px 10px;
         position: relative;
@@ -109,7 +109,7 @@
         z-index: 10;
     }
     .info-separator {
-        width: 8px;
+        width: 15px;
         background: #66bb6a;
         color: white;
         font-weight: bold;
@@ -120,7 +120,7 @@
         background: #e5e7eb;
         color: #1f2937;
         font-weight: bold;
-        font-size: 10px;
+        font-size: 12px;
         padding: 5px 10px;
     }
     
@@ -178,8 +178,8 @@
     <!-- Action Bar (Hidden on Print) -->
     <div class="no-print" style="max-width: 800px; margin: 0 auto; padding: 15px 0; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
-            <h1 style="font-size: 18px; font-weight: 900; margin: 0;">Digital Certificate</h1>
-            <p style="color: #64748b; margin: 3px 0 0 0; font-size: 12px;">Official verified credential for your EPT result.</p>
+            <h1 style="font-size: 24px; font-weight: 900; margin: 0;">Digital Certificate</h1>
+            <p style="color: #64748b; margin: 3px 0 0 0; font-size: 14px;">Official verified credential for your EPT result.</p>
         </div>
     </div>
 
@@ -188,7 +188,7 @@
             <tr>
                 <td class="left-panel">
                     <div class="logo-circle">
-                        <img src="{{ asset('img/logo-unw.png') }}" alt="Logo UNW" style="width: 60px; height: auto; margin: 0 auto; display: block;">
+                        <img src="{{ asset('img/logo-unw.png') }}" alt="Logo UNW" style="width: 100px; height: auto; margin: 0 auto; display: block;">
                     </div>
                     <div class="unw-text">
                         <div class="unw-title">NGUDI</div>
@@ -293,7 +293,7 @@
         </div>
 
         <div class="legal-footer">
-            *Sertifikat EPT hanya bisa digunakan di lingkungan internal Universitas Ngudi Waluyo
+            *The EPT certificate is only valid for internal use at Ngudi Waluyo University.
         </div>
     </div>
 </div>
