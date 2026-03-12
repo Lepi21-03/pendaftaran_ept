@@ -15,6 +15,11 @@ class PengawasForm
                 \Filament\Forms\Components\DatePicker::make('tanggal_ujian')
                     ->label('Tanggal Ujian')
                     ->required()
+                    ->minDate(now()->startOfDay())
+                    ->validationMessages([
+                        'after_or_equal' => 'Tanggal ujian tidak boleh di masa lalu.',
+                    ])
+                    ->rule('after_or_equal:today')
                     ->unique(ignoreRecord: true),
                 \Filament\Forms\Components\TextInput::make('kuota')
                     ->label('Kuota')
