@@ -26,7 +26,11 @@ class MahasiswaController extends Controller
 
     public function ujian()
     {
-        $ujian = Ujian::with('pengawas')->where('status', 'open')->get();
+        $ujian = Ujian::with('pengawas')
+            ->where('status', 'open')
+            ->orderBy('tanggal_ujian', 'desc')
+            ->get();
+            
         return view('mahasiswa.ujian.index', compact('ujian'));
     }
 
