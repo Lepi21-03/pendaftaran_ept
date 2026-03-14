@@ -23,6 +23,21 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         ->name('login.store');
 
     // ================================================================
+    // RESET PASSWORD
+    // ================================================================
+    Route::get('/forgot-password', [\App\Http\Controllers\mahasiswa\PasswordResetController::class, 'showLinkRequestForm'])
+        ->name('password.request');
+
+    Route::post('/forgot-password', [\App\Http\Controllers\mahasiswa\PasswordResetController::class, 'sendResetLinkEmail'])
+        ->name('password.email');
+
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\mahasiswa\PasswordResetController::class, 'showResetForm'])
+        ->name('password.reset');
+
+    Route::post('/reset-password', [\App\Http\Controllers\mahasiswa\PasswordResetController::class, 'reset'])
+        ->name('password.update');
+
+    // ================================================================
     // VERIFIKASI EMAIL
     // ================================================================
 

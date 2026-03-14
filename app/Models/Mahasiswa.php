@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class Mahasiswa extends Authenticatable
 {
-    use HasFactory;
+    use HasFactory, Notifiable;
 
     protected $fillable = [
         'name',
@@ -46,5 +47,14 @@ class Mahasiswa extends Authenticatable
     public function daftars()
     {
         return $this->hasMany(Daftar::class, 'nim', 'nim');
+    }
+
+    /**
+     * Kirim notifikasi reset password.
+     * Menggunakan notifikasi custom agar link mengarah ke route mahasiswa.password.reset
+     */
+    public function sendPasswordResetNotification($token)
+    {
+        $this->notify(new \App\Notifications\MahasiswaResetPasswordNotification($token));
     }
 }
