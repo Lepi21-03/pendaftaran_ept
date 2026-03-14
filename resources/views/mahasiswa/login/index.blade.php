@@ -47,6 +47,7 @@
                 <div class="space-y-2">
                     <div class="flex items-center justify-between">
                         <label class="text-sm font-semibold text-slate-700 dark:text-slate-300" for="password">Password</label>
+                        <a href="{{ route('mahasiswa.password.request') }}" class="text-xs font-semibold text-primary hover:text-blue-700 transition-colors">Forgot Password?</a>
                     </div>
                     <div class="relative group">
                         <span class="material-symbols-outlined absolute inset-y-0 left-3 flex items-center text-slate-400 group-focus-within:text-primary transition-colors">lock</span>
