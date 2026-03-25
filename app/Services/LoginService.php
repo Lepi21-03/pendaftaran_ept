@@ -7,9 +7,29 @@ use App\Models\LoginToken;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Auth;
 
 class LoginService
 {
+    /**
+     * Memproses login menggunakan kredensial email dan password (Auth attempt).
+     */
+    public function loginWithPassword(array $credentials): bool
+    {
+        return Auth::guard('mahasiswa')->attempt($credentials);
+    }
+
+    /**
+     * Memproses logout, invalidate session, dan regenerate CSRF token.
+     */
+    public function logout(\Illuminate\Http\Request $request): void
+    {
+        Auth::guard('mahasiswa')->logout();
+        $request->session()->flush();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+    }
+
     public function sendMagicLink(string $email, string $nim): void
     {
         $mahasiswa = Mahasiswa::where('email', $email)

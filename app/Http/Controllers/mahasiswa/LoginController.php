@@ -9,7 +9,14 @@ use App\Services\LoginService;
 
 class LoginController extends Controller
 {
-    public function send(Request $request, LoginService $service)
+    protected $loginService;
+
+    public function __construct(LoginService $loginService)
+    {
+        $this->loginService = $loginService;
+    }
+
+    public function send(Request $request)
     {
         $request->validate([
             'email' => 'required|email',
@@ -17,16 +24,16 @@ class LoginController extends Controller
         ]);
 
         try {
-            $service->sendMagicLink($request->email, $request->nim);
-            return back()-> with('success', 'Silahkan Cek Email');
+            $this->loginService->sendMagicLink($request->email, $request->nim);
+            return back()->with('success', 'Silahkan Cek Email');
         } catch (\Exception $e) {
-            return back() -> withErrors($e->getMessage());
+            return back()->withErrors($e->getMessage());
         }
     }
 
-    public function verify(string $token, LoginService $service)
+    public function verify(string $token)
     {
-        $mahasiswa = $service->verifyToken($token);
+        $mahasiswa = $this->loginService->verifyToken($token);
         Auth::guard('mahasiswa')->login($mahasiswa);
         return redirect()->route('mahasiswa.ujian.index');
     }

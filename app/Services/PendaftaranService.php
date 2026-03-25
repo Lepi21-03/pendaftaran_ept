@@ -4,7 +4,11 @@ namespace App\Services;
 
 use App\Models\Ujian;
 use App\Models\Daftar;
+use App\Models\Mahasiswa;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
+use App\Mail\VerifikasiEmailMail;
 
 class PendaftaranService
 {
@@ -69,5 +73,80 @@ class PendaftaranService
 
             return $pendaftaran;
         });
+    }
+
+    /**
+     * Membungkus proses daftar dengan simpan Akun Mahasiswa
+     * dan Pengiriman Email Verifikasi.
+     */
+    public function daftarWithAccount(array $validated): Daftar
+    {
+        // 1. Simpan pendaftaran
+        $pendaftaran = $this->daftar($validated);
+
+        // 2. Buat/update Mahasiswa dengan password (Otomatis di-hash oleh cast di model)
+        $mahasiswa = Mahasiswa::updateOrCreate(
+            ['nim' => $validated['nim']],
+            [
+                'name'     => $validated['nama_lengkap'],
+                'prodi'    => $validated['prodi'],
+                'email'    => $validated['email'],
+                'phone'    => $validated['no_telp'],
+                'password' => $validated['password'],
+            ]
+        );
+
+        // 3. Kirim email verifikasi
+        $this->sendVerificationEmail($mahasiswa, $pendaftaran);
+
+        return $pendaftaran;
+    }
+
+    /**
+     * Mengirim ulang email verifikasi.
+     */
+    public function resendVerification(string $email): array
+    {
+        $mahasiswa = Mahasiswa::where('email', $email)->first();
+
+        if (!$mahasiswa) {
+            throw new \Exception('Email tidak ditemukan dalam sistem.');
+        }
+
+        // Cari pendaftaran pending terakhir
+        $daftar = Daftar::where('email', $email)
+            ->where('status', 'pending')
+            ->latest()
+            ->first();
+
+        if (!$daftar) {
+            throw new \Exception('Tidak ditemukan pendaftaran yang menunggu verifikasi.');
+        }
+
+        $this->sendVerificationEmail($mahasiswa, $daftar);
+
+        return [
+            'daftar_id' => $daftar->id,
+            'email'     => $email
+        ];
+    }
+
+    /**
+     * Kirim email verifikasi dengan signed URL yang expire 5 menit.
+     */
+    private function sendVerificationEmail(Mahasiswa $mahasiswa, Daftar $daftar): void
+    {
+        $verificationUrl = URL::temporarySignedRoute(
+            'mahasiswa.verifikasi.email',   // nama route
+            now()->addMinutes(5),            // expire time
+            [
+                'mahasiswa_id' => $mahasiswa->id,
+                'daftar_id'    => $daftar->id,
+            ]
+        );
+
+        Mail::to($mahasiswa->email)->send(
+            new VerifikasiEmailMail($verificationUrl, $mahasiswa->name)
+        );
     }
 }
