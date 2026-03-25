@@ -4,13 +4,18 @@ namespace App\Http\Controllers\mahasiswa;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Services\PasswordResetService;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Auth\Events\PasswordReset;
 
 class PasswordResetController extends Controller
 {
+    protected $passwordResetService;
+
+    public function __construct(PasswordResetService $passwordResetService)
+    {
+        $this->passwordResetService = $passwordResetService;
+    }
+
     /**
      * Menampilkan halaman form input email (Forgot Password).
      */
@@ -26,10 +31,7 @@ class PasswordResetController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        // Menggunakan broker 'mahasiswas' yang sudah dikonfigurasi di config/auth.php
-        $status = Password::broker('mahasiswas')->sendResetLink(
-            $request->only('email')
-        );
+        $status = $this->passwordResetService->sendResetLink($request->only('email'));
 
         return $status === Password::RESET_LINK_SENT
             ? back()->with('status', __($status))
@@ -57,17 +59,8 @@ class PasswordResetController extends Controller
             'password' => 'required|min:8|confirmed',
         ]);
 
-        $status = Password::broker('mahasiswas')->reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => $password // Cast 'hashed' di model akan menghash otomatis
-                ])->setRememberToken(Str::random(60));
-
-                $user->save();
-
-                event(new PasswordReset($user));
-            }
+        $status = $this->passwordResetService->resetPassword(
+            $request->only('email', 'password', 'password_confirmation', 'token')
         );
 
         return $status === Password::PASSWORD_RESET
