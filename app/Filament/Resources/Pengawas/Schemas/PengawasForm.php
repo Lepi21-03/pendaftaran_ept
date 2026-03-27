@@ -3,8 +3,9 @@
 namespace App\Filament\Resources\Pengawas\Schemas;
 
 use Filament\Schemas\Schema;
-
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Select;
 
 class PengawasForm
 {
@@ -12,7 +13,7 @@ class PengawasForm
     {
         return $schema
             ->components([
-                \Filament\Forms\Components\DatePicker::make('tanggal_ujian')
+                DatePicker::make('tanggal_ujian')
                     ->label('Tanggal Ujian')
                     ->required()
                     ->minDate(now()->startOfDay())
@@ -21,23 +22,37 @@ class PengawasForm
                     ])
                     ->rule('after_or_equal:today')
                     ->unique(ignoreRecord: true),
-                \Filament\Forms\Components\TextInput::make('kuota')
+
+                TextInput::make('kuota')
                     ->label('Kuota')
                     ->numeric()
                     ->default(40)
                     ->required(),
-                \Filament\Forms\Components\TextInput::make('lokasi')
+
+                TextInput::make('harga_ujian')
+                    ->label('Harga Ujian (Rp)')
+                    ->numeric()
+                    ->default(100000)
+                    ->minValue(1)
+                    ->required()
+                    ->prefix('Rp')
+                    ->helperText('Harga ini akan digunakan sebagai nominal invoice Xendit saat peserta melakukan pembayaran.')
+                    ->hint('⚡ Berlaku pada pendaftaran baru')
+                    ->hintColor('warning'),
+
+                TextInput::make('lokasi')
                     ->label('Lokasi Gedung/Ruangan')
                     ->placeholder('Contoh: Gedung A, Ruang 101')
                     ->required(),
-                \Filament\Forms\Components\Select::make('pengawas')
+
+                Select::make('pengawas')
                     ->label('Daftar Pengawas')
                     ->multiple()
                     ->relationship('pengawas', 'nama')
                     ->preload()
                     ->required()
                     ->createOptionForm([
-                        \Filament\Forms\Components\TextInput::make('nama')
+                        TextInput::make('nama')
                             ->required()
                             ->maxLength(255),
                     ]),

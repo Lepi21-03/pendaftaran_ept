@@ -94,10 +94,13 @@ class PembayaranService
         $successUrl = route('mahasiswa.pembayaran.sukses', ['daftar_id' => $daftar->id]);
         $failureUrl = route('mahasiswa.ujian.index');
 
+        // Ambil harga ujian dari relasi, fallback ke 100000 jika tidak ada
+        $hargaUjian = $daftar->ujian?->harga_ujian ?? 100000;
+
         $create_invoice_request = new \Xendit\Invoice\CreateInvoiceRequest([
             'external_id' => $externalId,
             'description' => 'Pembayaran Pendaftaran EPT - ' . $daftar->nim,
-            'amount'      => 100000,
+            'amount'      => (int) $hargaUjian,
             'payer_email' => $daftar->email,
             'customer'    => [
                 'given_names'   => $daftar->nama_lengkap,
