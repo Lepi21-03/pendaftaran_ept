@@ -20,6 +20,7 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         ->name('login');
 
     Route::post('/login', [MahasiswaController::class, 'loginStore'])
+        ->middleware('throttle:login')
         ->name('login.store');
 
     // ================================================================
@@ -29,12 +30,14 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         ->name('password.request');
 
     Route::post('/forgot-password', [\App\Http\Controllers\mahasiswa\PasswordResetController::class, 'sendResetLinkEmail'])
+        ->middleware('throttle:forgot-password')
         ->name('password.email');
 
     Route::get('/reset-password/{token}', [\App\Http\Controllers\mahasiswa\PasswordResetController::class, 'showResetForm'])
         ->name('password.reset');
 
     Route::post('/reset-password', [\App\Http\Controllers\mahasiswa\PasswordResetController::class, 'reset'])
+        ->middleware('throttle:reset-password')
         ->name('password.update');
 
     // ================================================================
@@ -49,14 +52,16 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     // Middleware 'signed' memvalidasi signature dan expiry secara otomatis
     Route::get('/verifikasi/email/{mahasiswa_id}/{daftar_id}', [MahasiswaController::class, 'verifikasiEmail'])
         ->name('verifikasi.email')
-        ->middleware('signed');
+        ->middleware(['signed', 'throttle:verifikasi']);
 
     // Kirim ulang email verifikasi
     Route::post('/verifikasi/resend', [MahasiswaController::class, 'resendVerifikasi'])
+        ->middleware('throttle:resend-verifikasi')
         ->name('verifikasi.resend');
 
     // API: Cek status pembayaran (dipanggil via AJAX polling dari halaman cek-email)
     Route::get('/verifikasi/cek-status/{daftar_id}', [MahasiswaController::class, 'cekStatusPembayaran'])
+        ->middleware('throttle:cek-status')
         ->name('verifikasi.cek-status');
 
     // ================================================================
@@ -81,6 +86,7 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         ->name('daftar.index');
 
     Route::post('/daftar', [MahasiswaController::class, 'store'])
+        ->middleware('throttle:register')
         ->name('daftar.store');
 
     // Route dipanggil Xendit saat user berhasil bayar (redirect dari Xendit)
