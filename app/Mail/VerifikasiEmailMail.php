@@ -17,9 +17,20 @@ use Illuminate\Queue\SerializesModels;
  * - Tombol "Verifikasi & Lanjutkan Pembayaran" dengan signed URL
  * - Informasi bahwa link berlaku 5 menit
  */
-class VerifikasiEmailMail extends Mailable
+class VerifikasiEmailMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
+
+    /**
+     * Jumlah percobaan ulang jika pengiriman gagal.
+     */
+    public $tries = 3;
+
+    /**
+     * Jeda antar retry dalam detik (bertingkat: 10s → 30s → 60s).
+     */
+    public $backoff = [10, 30, 60];
 
     /**
      * @param string $verificationUrl  URL signed untuk verifikasi (expire 5 menit)
@@ -28,7 +39,10 @@ class VerifikasiEmailMail extends Mailable
     public function __construct(
         public string $verificationUrl,
         public string $namaUser
-    ) {}
+    ) {
+        $this->onQueue('emails');
+        $this->delay(now()->addSeconds(3));
+    }
 
     /**
      * Subject email yang dikirim.

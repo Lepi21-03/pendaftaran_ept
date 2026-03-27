@@ -145,7 +145,7 @@ class PendaftaranService
             ]
         );
 
-        Mail::to($mahasiswa->email)->send(
+        Mail::to($mahasiswa->email)->queue(
             new VerifikasiEmailMail($verificationUrl, $mahasiswa->name)
         );
     }

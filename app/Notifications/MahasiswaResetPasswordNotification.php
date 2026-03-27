@@ -8,11 +8,21 @@ use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\Lang;
 
-class MahasiswaResetPasswordNotification extends Notification
+class MahasiswaResetPasswordNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     public $token;
+
+    /**
+     * Jumlah percobaan ulang jika pengiriman gagal.
+     */
+    public $tries = 3;
+
+    /**
+     * Jeda antar retry dalam detik (bertingkat: 10s → 30s → 60s).
+     */
+    public $backoff = [10, 30, 60];
 
     /**
      * Create a new notification instance.
@@ -20,6 +30,8 @@ class MahasiswaResetPasswordNotification extends Notification
     public function __construct($token)
     {
         $this->token = $token;
+        $this->onQueue('emails');
+        $this->delay(now()->addSeconds(2));
     }
 
     /**

@@ -75,7 +75,7 @@ class PembayaranService
             return ['status' => 'already_success', 'mahasiswa' => $mahasiswa];
         }
 
-        $apiKey = env('XENDIT_API_KEY');
+        $apiKey = config('services.xendit.api_key');
         if (empty($apiKey)) {
             throw new \Exception('Konfigurasi Xendit API Key belum diatur pada server.');
         }
@@ -124,7 +124,7 @@ class PembayaranService
             return ['status' => 'already_success', 'mahasiswa' => $mahasiswa];
         }
 
-        \Xendit\Configuration::setXenditKey(env('XENDIT_API_KEY'));
+        \Xendit\Configuration::setXenditKey(config('services.xendit.api_key'));
 
         $options = [];
         if (app()->environment('local') && file_exists(storage_path('app/cacert.pem'))) {
@@ -147,7 +147,7 @@ class PembayaranService
     public function handleWebhook(string $webhookToken, array $data): void
     {
         Log::info('Webhook Incoming. Token received: ' . $webhookToken);
-        $myToken = env('XENDIT_CALLBACK_TOKEN');
+        $myToken = config('services.xendit.callback_token');
 
         if ($webhookToken !== $myToken) {
             throw new \Exception('Invalid token', 403);
