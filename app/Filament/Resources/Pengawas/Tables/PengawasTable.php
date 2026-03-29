@@ -25,6 +25,10 @@ class PengawasTable
                 \Filament\Tables\Columns\TextColumn::make('daftars_count')
                     ->label('Terisi')
                     ->counts('daftars'),
+                \Filament\Tables\Columns\TextColumn::make('harga_ujian')
+                    ->label('Harga (Rp)')
+                    ->money('IDR', locale: 'id')
+                    ->sortable(),
                 \Filament\Tables\Columns\TextColumn::make('lokasi')
                     ->label('Lokasi')
                     ->searchable(),

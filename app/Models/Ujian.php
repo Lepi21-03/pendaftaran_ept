@@ -13,11 +13,13 @@ class Ujian extends Model
         'tanggal_ujian',
         'kuota',
         'lokasi',
+        'harga_ujian',
     ];
 
     protected $attributes = [
-        'status' => 'open',
-        'kuota'  => 40,
+        'status'      => 'open',
+        'kuota'       => 40,
+        'harga_ujian' => 100000,
     ];
 
     /**
