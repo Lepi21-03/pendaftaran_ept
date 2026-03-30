@@ -81,5 +81,86 @@
 
 
 
+    {{-- SweetAlert2 CDN --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    {{-- Notifikasi Popup Modern (Session Flash) --}}
+    @if(session('success'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'success',
+                title: 'Berhasil!',
+                text: @json(session('success')),
+                position: 'top',
+                toast: true,
+                showConfirmButton: false,
+                timer: 10000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal-toast-custom'
+                },
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops!',
+                text: @json(session('error')),
+                position: 'top',
+                toast: true,
+                showConfirmButton: false,
+                timer: 5000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer);
+                    toast.addEventListener('mouseleave', Swal.resumeTimer);
+                }
+            });
+        });
+    </script>
+    @endif
+
+    <style>
+        /* SweetAlert2 Toast Custom Styling */
+        .swal2-popup.swal2-toast {
+            font-family: 'Plus Jakarta Sans', sans-serif !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12) !important;
+            border-radius: 12px !important;
+            background-color: #f8fafc !important;
+            color: #0f172a !important;
+            border: 1px solid #e2e8f0 !important;
+        }
+        .swal2-popup.swal2-toast .swal2-title {
+            color: #0f172a !important;
+        }
+        .swal2-popup.swal2-toast .swal2-html-container {
+            color: #475569 !important;
+        }
+
+        /* Dark mode */
+        .dark .swal2-popup.swal2-toast {
+            background-color: #0f172a !important;
+            color: #e2e8f0 !important;
+            border: 1px solid #1e293b !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+        }
+        .dark .swal2-popup.swal2-toast .swal2-title {
+            color: #f1f5f9 !important;
+        }
+        .dark .swal2-popup.swal2-toast .swal2-html-container {
+            color: #94a3b8 !important;
+        }
+    </style>
+
 </body>
 </html>

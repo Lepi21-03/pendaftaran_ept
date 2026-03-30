@@ -214,11 +214,16 @@
 </tr>
 </table>
 
+@php
+    $regYear = !empty($mahasiswa->test_date) ? \Carbon\Carbon::parse($mahasiswa->test_date)->year : now()->year;
+    $regNim = $mahasiswa->nim ?? '';
+    $regText = $regNim ? "EPT - {$regYear} - {$regNim}" : '-';
+@endphp
 <table class="info">
 <tr>
 <td class="label">Registration Number</td>
 <td class="sep">:</td>
-<td class="val">{{ $mahasiswa->nim ?? '-' }}</td>
+<td class="val">{{ $regText }}</td>
 </tr>
 </table>
 
@@ -232,7 +237,7 @@
 
 <table class="info">
 <tr>
-<td class="label">Date of Issue</td>
+<td class="label">Test Date</td>
 <td class="sep">:</td>
 <td class="val">{{ now()->translatedFormat('d F Y') }}</td>
 </tr>
@@ -274,6 +279,28 @@
 </tr>
 </table>
 
+@php
+    $isEnglish = strtolower(trim($mahasiswa->prodi ?? '')) === 'bahasa inggris';
+    $scoreValue = (int)($mahasiswa->score ?? 0);
+    if ($isEnglish) {
+        $isLulus = $scoreValue >= 450;
+    } else {
+        $isLulus = $scoreValue >= 400;
+    }
+    $statusText = $isLulus ? 'LULUS' : 'TIDAK LULUS';
+    $statusColor = $isLulus ? '#15803d' : '#dc2626';
+    $statusBg = $isLulus ? '#dcfce7' : '#fee2e2';
+@endphp
+<table class="info">
+<tr>
+<td class="label" style="background: {{ $statusColor }};">Status</td>
+<td class="sep" style="background: {{ $statusColor }};">:</td>
+<td class="val" style="text-align:center;background: {{ $statusBg }};color: {{ $statusColor }};font-weight:bold;letter-spacing:1px;">
+{{ $statusText }}
+</td>
+</tr>
+</table>
+
 </td>
 </tr>
 
@@ -287,20 +314,23 @@
 <td class="barcode">
 
 @php
-$barcodeUrl='https://bwipjs-api.metafloor.com/?bcid=code128&text='.($mahasiswa->nim ?? '000000').'&scale=2&rotate=N&includetext=true';
-try{
-$barcodeData=base64_encode(file_get_contents($barcodeUrl));
-}catch(Exception $e){
-$barcodeData='';
-}
+    $regYear = !empty($mahasiswa->test_date) ? \Carbon\Carbon::parse($mahasiswa->test_date)->year : now()->year;
+    $regNim = $mahasiswa->nim ?? '000000';
+    $regTextBarcode = "EPT - {$regYear} - {$regNim}";
+    $barcodeUrl = 'https://bwipjs-api.metafloor.com/?bcid=code128&text=' . urlencode($regTextBarcode) . '&scale=2&height=10&rotate=N&includetext=true';
+    try {
+        $barcodeData = base64_encode(file_get_contents($barcodeUrl));
+    } catch(Exception $e) {
+        $barcodeData = '';
+    }
 @endphp
 
 @if($barcodeData)
-<img src="data:image/png;base64,{{ $barcodeData }}" width="90">
+<img src="data:image/png;base64,{{ $barcodeData }}" height="45" style="width: auto;">
 @endif
 
-<div style="font-size:6pt;color:#6b7280;margin-top:1mm">
-Verified Credential ID: EPT-{{ $mahasiswa->nim }}
+<div style="font-size:6pt;color:#6b7280;margin-top:2mm">
+Verified Credential ID: {{ $regTextBarcode }}
 </div>
 
 </td>
