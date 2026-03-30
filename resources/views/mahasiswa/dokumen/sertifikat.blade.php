@@ -205,11 +205,16 @@
                             <td class="info-value">{{ $mahasiswa->name ?? '-' }}</td>
                         </tr>
                     </table>
+                    @php
+                        $regYear = !empty($mahasiswa->test_date) ? \Carbon\Carbon::parse($mahasiswa->test_date)->year : now()->year;
+                        $regNim = $mahasiswa->nim ?? '';
+                        $regText = $regNim ? "EPT - {$regYear} - {$regNim}" : '-';
+                    @endphp
                     <table class="info-table">
                         <tr>
                             <td class="info-label">Registration Number</td>
                             <td class="info-separator">:</td>
-                            <td class="info-value">{{ $mahasiswa->nim ?? '-' }}</td>
+                            <td class="info-value">{{ $regText }}</td>
                         </tr>
                     </table>
                     <table class="info-table">
@@ -221,7 +226,7 @@
                     </table>
                     <table class="info-table">
                         <tr>
-                            <td class="info-label">Date of Issue</td>
+                            <td class="info-label">Test Date</td>
                             <td class="info-separator">:</td>
                             <td class="info-value">{{ now()->translatedFormat('d F Y') }}</td>
                         </tr>
@@ -258,6 +263,25 @@
                             <td class="info-value" style="text-align: right; background: #d1fae5;">{{ $mahasiswa->score ?? '-' }}</td>
                         </tr>
                     </table>
+
+                    @php
+                        $isEnglish = strtolower(trim($mahasiswa->prodi ?? '')) === 'bahasa inggris';
+                        $scoreValue = (int)($mahasiswa->score ?? 0);
+                        if ($isEnglish) {
+                            $isLulus = $scoreValue >= 450;
+                        } else {
+                            $isLulus = $scoreValue >= 400;
+                        }
+                        $statusText = $isLulus ? 'LULUS' : 'TIDAK LULUS';
+                        $statusColor = $isLulus ? '#15803d' : '#dc2626';
+                    @endphp
+                    <table class="info-table">
+                        <tr>
+                            <td class="info-label">Status</td>
+                            <td class="info-separator">:</td>
+                            <td class="info-value" style="text-align: right; color: {{ $statusColor }}; font-weight: 900; letter-spacing: 1px;">{{ $statusText }}</td>
+                        </tr>
+                    </table>
                 </td>
             </tr>
         </table>
@@ -266,7 +290,16 @@
         <table class="footer-table">
             <tr>
                 <td class="barcode-area">
-                    <img src="data:image/png;base64,{{ base64_encode(file_get_contents('https://bwipjs-api.metafloor.com/?bcid=code128&text=' . ($mahasiswa->nim ?? '000000') . '&scale=1&rotate=N&includetext=true')) }}" width="100" alt="barcode">
+                    @php
+                        $regYear = !empty($mahasiswa->test_date) ? \Carbon\Carbon::parse($mahasiswa->test_date)->year : now()->year;
+                        $regNim = $mahasiswa->nim ?? '000000';
+                        $regTextBarcode = "EPT - {$regYear} - {$regNim}";
+                        $barcodeUrl = 'https://bwipjs-api.metafloor.com/?bcid=code128&text=' . urlencode($regTextBarcode) . '&scale=2&height=10&rotate=N&includetext=true';
+                        $barcodeData = @base64_encode(@file_get_contents($barcodeUrl));
+                    @endphp
+                    @if($barcodeData)
+                    <img src="data:image/png;base64,{{ $barcodeData }}" height="55" style="width: auto; max-width: 280px;" alt="barcode">
+                    @endif
                 </td>
                 <td class="signature-area">
                     <p style="font-size: 9px; color: #6b7280; margin-bottom: 3px;">The head of language laboratory</p>

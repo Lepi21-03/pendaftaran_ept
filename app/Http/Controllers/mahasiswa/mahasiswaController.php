@@ -9,7 +9,6 @@ use App\Services\PembayaranService;
 use App\Services\LoginService;
 use App\Services\UjianService;
 use App\Services\DokumenService;
-use App\Models\Daftar;
 use App\Models\Ujian;
 use App\Models\Prodi;
 
@@ -63,32 +62,6 @@ class MahasiswaController extends Controller
 
         if ($this->loginService->loginWithPassword($credentials)) {
             $request->session()->regenerate();
-
-            // Cek apakah mahasiswa sudah menyelesaikan pembayaran
-            $mahasiswa = \Illuminate\Support\Facades\Auth::guard('mahasiswa')->user();
-            $sudahBayar = Daftar::where('nim', $mahasiswa->nim)
-                ->where('status', 'success')
-                ->exists();
-
-            if (!$sudahBayar) {
-                // Logout paksa — akun ada tapi pembayaran belum selesai
-                $emailMahasiswa = $mahasiswa->email;
-                $this->loginService->logout($request);
-
-                // Kirim ulang email verifikasi supaya user bisa lanjut bayar
-                try {
-                    $result = $this->pendaftaranService->resendVerification($emailMahasiswa);
-                    return redirect()->route('mahasiswa.verifikasi.cek-email')
-                        ->with('verification_email', $result['email'])
-                        ->with('verification_daftar_id', $result['daftar_id'])
-                        ->with('info', 'Akun Anda belum aktif. Link pembayaran telah dikirim ke email Anda, silakan cek inbox.');
-                } catch (\Throwable $e) {
-                    return back()->withErrors([
-                        'email' => 'Akun Anda belum aktif. Gagal mengirim email: ' . $e->getMessage(),
-                    ])->onlyInput('email');
-                }
-            }
-
             return redirect()->intended(route('mahasiswa.ujian.index'))
                 ->with('success', 'Selamat datang kembali!');
         }
@@ -147,9 +120,8 @@ class MahasiswaController extends Controller
         try {
             $pendaftaran = $this->pendaftaranService->daftarWithAccount($validated);
 
-            return redirect()->route('mahasiswa.verifikasi.cek-email')
-                ->with('verification_email', $validated['email'])
-                ->with('verification_daftar_id', $pendaftaran->id);
+            return redirect()->route('mahasiswa.ujian.index')
+                ->with('success', 'Check Your Email To Registration and Payment');
 
         } catch (\Throwable $e) {
             return back()->withInput()->withErrors($e->getMessage());
