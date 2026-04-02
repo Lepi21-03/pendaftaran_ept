@@ -87,12 +87,12 @@
                             <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
                         </a>
                     @elseif($isPast)
-                        <button onclick="alert('The exam date has passed. This session is completed.')" class="w-full py-3 bg-slate-400 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-not-allowed">
+                        <button onclick="showToast('warning','Session Closed','The exam date has passed. This session is completed.')" class="w-full py-3 bg-slate-400 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-not-allowed">
                             <span class="material-symbols-outlined">check_circle</span>
                             Test Completed
                         </button>
                     @else
-                        <button onclick="alert('The registration quota is full. Registration is closed.')" class="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/25 flex items-center justify-center gap-2 cursor-not-allowed">
+                        <button onclick="showToast('error','Quota Full','The registration quota is full. Registration is closed.')" class="w-full py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded-xl transition-all shadow-lg shadow-red-500/25 flex items-center justify-center gap-2 cursor-not-allowed">
                             <span class="material-symbols-outlined">lock</span>
                             Quota Full
                         </button>
