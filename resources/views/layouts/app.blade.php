@@ -83,6 +83,23 @@
 
     {{-- SweetAlert2 CDN --}}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function showToast(icon, title, text) {
+            Swal.fire({
+                icon: icon,
+                title: title,
+                text: text,
+                position: 'top',
+                toast: true,
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                customClass: {
+                    popup: 'swal-toast-custom'
+        }
+    });
+}
+</script>
 
     {{-- Notifikasi Popup Modern (Session Flash) --}}
     @if(session('success'))
