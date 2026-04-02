@@ -1,5 +1,13 @@
 @extends('layouts.app')
 
+@php
+    $user = \Illuminate\Support\Facades\Auth::guard('mahasiswa')->user();
+    $daftars = collect();
+    if($user){
+        $daftars = \App\Models\Daftar::where('nim', $user->nim)->get();
+    }
+@endphp
+
 @section('content')
 <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-16">
 <header class="mb-12">
@@ -26,6 +34,13 @@
                         @php
                             $isPast = \Carbon\Carbon::parse($u->tanggal_ujian)->isPast() && !\Carbon\Carbon::parse($u->tanggal_ujian)->isToday();
                             $isFull = $u->sisaKuota() <= 0;
+                            $userStatus = null;
+                            if($user){
+                                $currentDaftar = $daftars->where('ujian_id', $u->id)->first();
+                                if($currentDaftar){
+                                    $userStatus = $currentDaftar->status;
+                                }
+                            }
                         @endphp
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 
                         @if($isPast) bg-slate-100 dark:bg-slate-900/40 text-slate-600 dark:text-slate-400
@@ -81,11 +96,31 @@
                     </div>
                 </div>
                 <div class="mt-auto">
-                    @if(!$isPast && !$isFull)
-                        <a href="{{ route('mahasiswa.daftar.index', ['ujian_id' => $u->id]) }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
-                            Register Now
-                            <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
-                        </a>
+                    @if($user && $userStatus === 'success')
+                        <button class="w-full py-3 bg-green-500 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-not-allowed">
+                            <span class="material-symbols-outlined">check_circle</span>
+                            Already Registered
+                        </button>
+                    @elseif($user && $userStatus === 'pending')
+                        <button onclick="showToast('warning', 'Payment Pending', 'You have registered but your payment is still pending. Please check your email or invoice.')" class="w-full py-3 bg-amber-500 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-not-allowed">
+                            <span class="material-symbols-outlined">pending_actions</span>
+                            Pending Payment
+                        </button>
+                    @elseif(!$isPast && !$isFull)
+                        @if($user)
+                            <form action="{{ route('mahasiswa.daftar.langsung', ['ujian_id' => $u->id]) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
+                                    Register Now
+                                    <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                                </button>
+                            </form>
+                        @else
+                            <a href="{{ route('mahasiswa.daftar.index', ['ujian_id' => $u->id]) }}" class="w-full py-3 bg-primary hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 group/btn">
+                                Register Now
+                                <span class="material-symbols-outlined group-hover/btn:translate-x-1 transition-transform">arrow_forward</span>
+                            </a>
+                        @endif
                     @elseif($isPast)
                         <button onclick="showToast('warning','Session Closed','The exam date has passed. This session is completed.')" class="w-full py-3 bg-slate-400 text-white font-bold rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 cursor-not-allowed">
                             <span class="material-symbols-outlined">check_circle</span>

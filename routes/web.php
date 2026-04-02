@@ -89,6 +89,10 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
         ->middleware('throttle:register')
         ->name('daftar.store');
 
+    Route::post('/daftar-langsung/{ujian_id}', [MahasiswaController::class, 'daftarLangsung'])
+        ->middleware('throttle:register')
+        ->name('daftar.langsung');
+
     // Route dipanggil Xendit saat user berhasil bayar (redirect dari Xendit)
     Route::get('/pembayaran/sukses', [MahasiswaController::class, 'pembayaranSukses'])
         ->name('pembayaran.sukses');
