@@ -132,6 +132,51 @@ class MahasiswaController extends Controller
     // EMAIL VERIFIKASI
     // ================================================================
 
+    public function daftarLangsung(Request $request, $ujian_id)
+    {
+        $mahasiswa = \Illuminate\Support\Facades\Auth::guard('mahasiswa')->user();
+        if (!$mahasiswa) {
+            return redirect()->route('mahasiswa.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // Ambil data history dari pendaftaran sebelumnya
+        $lastDaftar = \App\Models\Daftar::where('nim', $mahasiswa->nim)->latest()->first();
+
+        // Kalau benar-benar tidak ada data sebelumnya fallback ke halaman biasa
+        if (!$lastDaftar) {
+            return redirect()->route('mahasiswa.daftar.index', ['ujian_id' => $ujian_id])
+                ->with('warning', 'Maaf, data biodata belum lengkap. Silakan isi form di bawah ini.');
+        }
+
+        $data = [
+            'ujian_id'     => $ujian_id,
+            'nim'          => $mahasiswa->nim,
+            'nama_lengkap' => $mahasiswa->name,
+            'tempat_lahir' => $lastDaftar->tempat_lahir,
+            'bod'          => $lastDaftar->bod,
+            'prodi'        => $mahasiswa->prodi,
+            'no_telp'      => $mahasiswa->phone,
+            'email'        => $mahasiswa->email,
+        ];
+
+        try {
+            // Lakukan generate daftar DB, cuma nyimpen status pending
+            $pendaftaran = $this->pendaftaranService->daftar($data);
+
+            // Generate xendit invoice
+            $result = $this->pembayaranService->createInvoiceForVerification($mahasiswa->id, $pendaftaran->id);
+
+            if ($result['status'] === 'redirect') {
+                return redirect($result['url']);
+            } elseif ($result['status'] === 'already_success') {
+                return redirect()->route('mahasiswa.ujian.index')->with('success', 'Anda sudah terdaftar di ujian ini.');
+            }
+
+        } catch (\Throwable $e) {
+            return back()->withErrors($e->getMessage());
+        }
+    }
+
     public function cekEmail()
     {
         return view('mahasiswa.verifikasi.cek-email');
