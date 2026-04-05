@@ -325,6 +325,45 @@ class MahasiswaController extends Controller
     }
 
     // ================================================================
+    // PROFILE
+    // ================================================================
+
+    public function profile()
+    {
+        $user = \Illuminate\Support\Facades\Auth::guard('mahasiswa')->user();
+        if (!$user) {
+            return redirect()->route('mahasiswa.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        // Load daftars with ujian relation for exam history
+        $user->load('daftars.ujian');
+
+        return view('mahasiswa.profile.index', compact('user'));
+    }
+
+    public function updateProfile(Request $request)
+    {
+        $user = \Illuminate\Support\Facades\Auth::guard('mahasiswa')->user();
+        if (!$user) {
+            return redirect()->route('mahasiswa.login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:mahasiswas,email,' . $user->id,
+        ]);
+
+        $oldEmail = $user->email;
+        $user->update($validated);
+
+        if ($oldEmail !== $user->email) {
+            \Illuminate\Support\Facades\Mail::to($user->email)->send(new \App\Mail\EmailUpdatedNotification($user));
+        }
+
+        return back()->with('success', 'Profil berhasil diperbarui!');
+    }
+
+    // ================================================================
     // LOGOUT
     // ================================================================
 
