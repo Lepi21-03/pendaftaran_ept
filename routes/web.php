@@ -97,6 +97,18 @@ Route::prefix('mahasiswa')->name('mahasiswa.')->group(function () {
     Route::get('/pembayaran/sukses', [MahasiswaController::class, 'pembayaranSukses'])
         ->name('pembayaran.sukses');
 
+    // Profile
+    Route::middleware('auth:mahasiswa')->group(function () {
+        Route::get('/profile', [MahasiswaController::class, 'profile'])
+            ->name('profile');
+        Route::put('/profile', [MahasiswaController::class, 'updateProfile'])
+            ->name('profile.update');
+        
+        Route::get('/profile/change-password', function () {
+            return view('mahasiswa.profile.change-password');
+        })->name('profile.change-password');
+    });
+
     // Logout
     Route::post('/logout', [MahasiswaController::class, 'logout'])
         ->name('logout');
