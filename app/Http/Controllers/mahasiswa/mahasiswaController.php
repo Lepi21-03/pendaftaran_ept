@@ -63,11 +63,11 @@ class MahasiswaController extends Controller
         if ($this->loginService->loginWithPassword($credentials)) {
             $request->session()->regenerate();
             return redirect()->intended(route('mahasiswa.ujian.index'))
-                ->with('success', 'Selamat datang kembali!');
+                ->with('success', 'Welcome Back!');
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password tidak sesuai.',
+            'email' => 'Email or Password Not Match!',
         ])->onlyInput('email');
     }
 

@@ -140,8 +140,8 @@
                     <span class="material-symbols-outlined text-3xl">update</span>
                 </div>
                 <div>
-                    <p class="text-slate-600 dark:text-slate-400 font-semibold text-xl">Belum ada sesi tersedia</p>
-                    <p class="text-slate-400 dark:text-slate-500">Jadwal Baru Akan Segera Diumumkan.</p>
+                    <p class="text-slate-600 dark:text-slate-400 font-semibold text-xl">No sessions available yet</p>
+                    <p class="text-slate-400 dark:text-slate-500">New schedules will be announced soon.</p>
                 </div>
             </div>
             @endforelse
