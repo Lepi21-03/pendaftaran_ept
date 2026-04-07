@@ -3,8 +3,8 @@
 @section('content')
 <div class="max-w-5xl mx-auto px-4 py-12">
     <div class="mb-10">
-        <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Profil Mahasiswa</h1>
-        <p class="text-slate-500 dark:text-slate-400">Atur informasi pribadi dan lihat riwayat pendaftaran ujian Anda.</p>
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Student Profile</h1>
+        <p class="text-slate-500 dark:text-slate-400">Manage your personal information and view your exam registration history.</p>
     </div>
 
     @if (session('success'))
@@ -47,11 +47,11 @@
                         <span class="font-medium text-slate-900 dark:text-white">{{ $user->nim }}</span>
                     </div>
                     <div class="flex justify-between items-center text-sm mb-3">
-                        <span class="text-slate-500 dark:text-slate-400">Program Studi</span>
+                        <span class="text-slate-500 dark:text-slate-400">Program Study</span>
                         <span class="font-medium text-slate-900 dark:text-white">{{ $user->prodi ?? '-' }}</span>
                     </div>
                     <div class="flex justify-between items-center text-sm">
-                        <span class="text-slate-500 dark:text-slate-400">No. Telp</span>
+                        <span class="text-slate-500 dark:text-slate-400">Phone Number</span>
                         <span class="font-medium text-slate-900 dark:text-white">{{ $user->phone ?? '-' }}</span>
                     </div>
                 </div>
@@ -59,11 +59,11 @@
 
             <!-- Ganti Password Card -->
             <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-xl p-6">
-                <h3 class="font-semibold text-slate-900 dark:text-white mb-2">Keamanan</h3>
-                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Gunakan fitur ini jika Anda ingin melakukan reset atau perubahan pada password Anda.</p>
+                <h3 class="font-semibold text-slate-900 dark:text-white mb-2">Security</h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Use this feature if you want to reset or change your password.</p>
                 <a href="{{ route('mahasiswa.profile.change-password') }}" class="w-full inline-flex justify-center items-center gap-2 px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg text-sm font-medium text-slate-700 dark:text-slate-300 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
                     <span class="material-symbols-outlined text-[20px]">lock_reset</span>
-                    Perbarui Password
+                    Update Password
                 </a>
             </div>
         </div>
@@ -74,7 +74,7 @@
             <!-- Edit Biodata -->
             <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-xl p-6 sm:p-8">
                 <div class="mb-6 border-b border-slate-100 dark:border-slate-700 pb-4">
-                    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200">Edit Profil Dasar</h2>
+                    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200">Edit Basic Profil</h2>
                 </div>
 
                 <form action="{{ route('mahasiswa.profile.update') }}" method="POST" class="space-y-6">
@@ -83,20 +83,20 @@
                     
                     <div class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="name">Nama Lengkap</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="name">Full Name</label>
                             <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="name" name="name" type="text" value="{{ old('name', $user->name) }}" required/>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="email">Alamat Email</label>
+                            <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1" for="email">Email Address</label>
                             <input class="block w-full px-4 py-3 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" id="email" name="email" type="email" value="{{ old('email', $user->email) }}" required/>
-                            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Pemberitahuan ujian dan pembayaran akan dikirimkan ke email ini.</p>
+                            <p class="mt-1 text-xs text-slate-500 dark:text-slate-400">Exam and payment notifications will be sent to this email.</p>
                         </div>
                     </div>
 
                     <div class="pt-4 flex justify-end">
                         <button type="submit" class="bg-primary hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg shadow shadow-blue-500/25 transition-all text-sm">
-                            Simpan Perubahan
+                            Save Changes
                         </button>
                     </div>
                 </form>
@@ -105,16 +105,16 @@
             <!-- Riwayat Pendaftaran Ujian -->
             <div class="bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
                 <div class="p-6 border-b border-slate-100 dark:border-slate-700">
-                    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200">Riwayat Ujian</h2>
+                    <h2 class="text-xl font-semibold text-slate-800 dark:text-slate-200">Exam History</h2>
                 </div>
                 
                 <div class="overflow-x-auto">
                     <table class="w-full text-sm text-left text-slate-500 dark:text-slate-400">
                         <thead class="text-xs text-slate-700 uppercase bg-slate-50 dark:bg-slate-800 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
                             <tr>
-                                <th scope="col" class="px-6 py-4">Tanggal Ujian</th>
-                                <th scope="col" class="px-6 py-4">Lokasi</th>
-                                <th scope="col" class="px-6 py-4">Status Pendaftaran</th>
+                                <th scope="col" class="px-6 py-4">Test Date</th>
+                                <th scope="col" class="px-6 py-4">Location</th>
+                                <th scope="col" class="px-6 py-4">Registration Status</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -129,9 +129,9 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         @if($daftar->status == 'pending')
-                                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-yellow-300">Menunggu Pembayaran</span>
+                                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-yellow-300">Pending Payment</span>
                                         @elseif($daftar->status == 'success')
-                                            <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-green-300">Terdaftar</span>
+                                            <span class="bg-green-100 text-green-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-green-300">Registered</span>
                                         @else
                                             <span class="bg-slate-100 text-slate-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded border border-slate-300">{{ ucfirst($daftar->status) }}</span>
                                         @endif
