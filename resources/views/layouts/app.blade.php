@@ -36,6 +36,22 @@
             font-family: 'Plus Jakarta Sans', sans-serif !important;
         }
 
+        /* LIGHT MODE */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #ffffff inset !important;
+            -webkit-text-fill-color: #0f172a !important;
+        }
+
+        /* DARK MODE */
+        .dark input:-webkit-autofill,
+        .dark input:-webkit-autofill:hover,
+        .dark input:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
+            -webkit-text-fill-color: #ffffff !important;
+        }
+
         /* CSS khusus agar Ikon Outlined muncul dengan benar */
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined' !important;
