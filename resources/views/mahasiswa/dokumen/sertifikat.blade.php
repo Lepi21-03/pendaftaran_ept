@@ -10,7 +10,7 @@
     }
     .certificate-wrapper {
         width: 100%;
-        background-color: #f8fafc;
+        background-color: transparent;
         display: block;
         position: relative;
         font-family: 'Helvetica', 'Arial', sans-serif;
@@ -29,6 +29,7 @@
         width: 800px; /* Kembali ke lebar landscape yang lebih proporsional di layar */
         margin: 0 auto;
         background: white;
+        color: #000;
         box-shadow: 0 15px 30px -5px rgb(0 0 0 / 0.15);
         border-radius: 6px;
         overflow: hidden;
@@ -178,8 +179,8 @@
     <!-- Action Bar (Hidden on Print) -->
     <div class="no-print" style="max-width: 800px; margin: 0 auto; padding: 15px 0; display: flex; justify-content: space-between; align-items: flex-end;">
         <div>
-            <h1 style="font-size: 24px; font-weight: 900; margin: 0;">Digital Certificate</h1>
-            <p style="color: #64748b; margin: 3px 0 0 0; font-size: 14px;">Official verified credential for your EPT result.</p>
+            <h1 class="text-slate-900 dark:text-white" style="font-size: 24px; font-weight: 900; margin: 0;">Digital Certificate</h1>
+            <p class="text-slate-500 dark:text-slate-400" style="margin: 3px 0 0 0; font-size: 14px;">Official verified credential for your EPT result.</p>
         </div>
     </div>
 

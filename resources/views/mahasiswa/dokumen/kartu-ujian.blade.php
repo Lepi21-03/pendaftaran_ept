@@ -15,7 +15,7 @@
     .full-page-wrapper {
         width: 100%;
         display: block;
-        background-color: #f1f5f9;
+        background-color: transparent;
         padding: 20px 0;
     }
     @media print {
@@ -32,6 +32,7 @@
         margin: 0 auto;
         border: 2px solid #000;
         background: white;
+        color: #000;
         padding: 5mm;
         box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         position: relative;

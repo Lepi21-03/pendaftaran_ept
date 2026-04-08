@@ -71,10 +71,16 @@
     </style>
 
 <script>
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark')
+    // Cek dari localStorage dulu
+    if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
+    } else if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.remove('dark');
     } else {
-        document.documentElement.classList.remove('dark')
+        // fallback ke sistem
+        if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            document.documentElement.classList.add('dark');
+        }
     }
 </script>
 
