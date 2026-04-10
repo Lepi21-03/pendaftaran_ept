@@ -109,11 +109,13 @@
             width:45%;
             text-align:center;
             padding-top: 2mm;
+            padding-left: 10mm;
         }
 
         .sign{
             text-align:center;
             width:50%;
+            padding-right:10mm;
         }
 
         .sig-title{
@@ -342,15 +344,6 @@ The head of language laboratory
 </div>
 
 <div class="sig-area">
-
-<div class="stamp">
-UNIVERSITAS<br>NGUDI WALUYO
-</div>
-
-<svg width="80" height="30" style="position:absolute;left:13mm;top:0">
-<path d="M 5 20 Q 15 5 25 10 Q 35 25 50 8 Q 60 2 70 15"
-stroke="#333" stroke-width="1.5" fill="none"/>
-</svg>
 
 </div>
 

@@ -141,10 +141,12 @@
     .barcode-area {
         vertical-align: bottom;
         padding-bottom: 10px;
+        padding-left: 40px;
     }
     .signature-area {
         text-align: center;
         width: 150px;
+        padding-right: 40px;
     }
     
     .bottom-bar {
@@ -305,14 +307,6 @@
                 <td class="signature-area">
                     <p style="font-size: 9px; color: #6b7280; margin-bottom: 3px;">The head of language laboratory</p>
                     <div style="position: relative; height: 80px;">
-                        <!-- Mock Stamp -->
-                        <div style="position: absolute; left: 15px; top: 0; width: 50px; height: 50px; border: 1.5px solid rgba(29, 78, 216, 0.4); border-radius: 50%; font-size: 4px; color: rgba(29, 78, 216, 0.6); padding-top: 10px; font-weight: bold;">
-                            UNIVERSITAS<br>NGUDI WALUYO
-                        </div>
-                        <!-- Mock Signature Path -->
-                        <svg width="80" height="40" style="position: relative; z-index: 2;">
-                            <path d="M 10 30 Q 20 5 35 15 Q 45 30 60 10 Q 70 2 85 20" stroke="#333" stroke-width="1.5" fill="none" />
-                        </svg>
                     </div>
                     <div style="border-bottom: 1.5px solid #6b7280; width: 100%; margin: 5px 0;"></div>
                     <p style="font-size: 10px; font-weight: bold; margin: 0;">Maya Kurnia Dewi, S.S., M.Hum</p>
